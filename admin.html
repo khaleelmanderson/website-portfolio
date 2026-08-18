@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Project Management</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            padding-top: 20px;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .dashboard-container {
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .form-section {
+            margin-bottom: 30px;
+        }
+        .form-section h3 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        #image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .project-row {
+            padding: 15px;
+            border: 1px solid #eee;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .project-row img {
+            margin-bottom: 10px;
+        }
+        .status-badge {
+            margin-left: 10px;
+        }
+        #alert-container {
+            margin-bottom: 20px;
+        }
+        .btn-group-form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- LOGIN SECTION -->
+        <div id="login-section">
+            <div class="login-container">
+                <h2>Admin Login</h2>
+                <div id="login-alert" class="alert alert-danger" style="display:none;"></div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" class="form-control" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" class="form-control" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboard-section" style="display:none;">
+            <div class="dashboard-container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2>Project Dashboard</h2>
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <button id="logout-btn" class="btn btn-default">Logout</button>
+                    </div>
+                </div>
+
+                <!-- Alert Container -->
+                <div id="form-alert" class="alert" style="display:none; margin-top:20px;"></div>
+
+                <!-- Compose Form -->
+                <div class="form-section">
+                    <h3>Compose New Project</h3>
+                    <form id="project-form">
+                        <input type="hidden" id="project-id">
+                        
+                        <div class="form-group">
+                            <label for="title">Project Title *</label>
+                            <input type="text" class="form-control" id="title" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description *</label>
+                            <textarea class="form-control" id="description" rows="5" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tags">Tags (comma-separated)</label>
+                            <input type="text" class="form-control" id="tags" placeholder="e.g., design, web, react">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="project_link">Project Link</label>
+                            <input type="url" class="form-control" id="project_link" placeholder="https://...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="image">Project Image</label>
+                            <input type="file" class="form-control" id="image" accept="image/*">
+                            <small class="form-text text-muted">JPG, PNG, or GIF</small>
+                        </div>
+
+                        <div class="form-group">
+                            <img id="image-preview" alt="Preview" style="display:none;">
+                        </div>
+
+                        <div class="btn-group-form">
+                            <button type="button" id="publish-btn" class="btn btn-success">Publish</button>
+                            <button type="button" id="draft-btn" class="btn btn-info">Save as Draft</button>
+                            <button type="button" id="update-btn" class="btn btn-warning" style="display:none;">Update</button>
+                            <button type="button" id="cancel-btn" class="btn btn-default" style="display:none;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Projects List -->
+                <div class="form-section">
+                    <h3>Projects</h3>
+                    <div id="projects-list">
+                        <p>Loading…</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery and Supabase -->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Admin Logic -->
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>

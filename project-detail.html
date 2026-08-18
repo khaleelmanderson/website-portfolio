@@ -6,7 +6,7 @@
 	<meta name="description" content="">
 	<meta name="author"      content="Sergey Pozhilov (GetTemplate.com)">
 	
-	<title>Khaleel Manderson Portfolio</title>
+	<title>Project Details - Khaleel Manderson Portfolio</title>
 
 	<link rel="shortcut icon" href="assets/images/MLogo.jpg">
 	
@@ -20,8 +20,80 @@
 	<link rel="stylesheet" href="assets/css/styles.css">
 
 	<!--[if lt IE 9]> <script src="assets/js/html5shiv.js"></script> <![endif]-->
+	
+	<style>
+		.project-detail-container {
+			padding: 40px 0;
+		}
+		.project-hero {
+			margin-bottom: 40px;
+		}
+		.project-hero img {
+			max-width: 100%;
+			height: auto;
+			border-radius: 8px;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+		}
+		.project-details {
+			margin-top: 30px;
+		}
+		.project-title {
+			font-size: 2.5rem;
+			margin-bottom: 20px;
+			font-weight: bold;
+		}
+		.project-tags {
+			margin: 20px 0;
+		}
+		.project-tag {
+			display: inline-block;
+			background: #f0f0f0;
+			padding: 5px 12px;
+			border-radius: 20px;
+			margin-right: 8px;
+			margin-bottom: 8px;
+			font-size: 0.9rem;
+			color: #333;
+		}
+		.project-description {
+			font-size: 1.1rem;
+			line-height: 1.8;
+			color: #555;
+			margin: 30px 0;
+		}
+		.project-actions {
+			margin-top: 40px;
+			padding-top: 30px;
+			border-top: 1px solid #eee;
+		}
+		.btn-view-project {
+			font-size: 1.1rem;
+			padding: 12px 30px;
+		}
+		.back-link {
+			display: inline-block;
+			margin-bottom: 20px;
+			color: #0066cc;
+			text-decoration: none;
+		}
+		.back-link:hover {
+			text-decoration: underline;
+		}
+		.project-loading {
+			text-align: center;
+			padding: 60px 20px;
+		}
+		.project-error {
+			background: #fee;
+			border: 1px solid #fcc;
+			padding: 20px;
+			border-radius: 4px;
+			color: #c33;
+			margin: 20px 0;
+		}
+	</style>
 </head>
-<body class="home">
+<body class="project-detail">
 
 <header id="header">
 	<div id="head" class="parallax" parallax-speed="2">
@@ -43,7 +115,7 @@
 			<div class="navbar-collapse collapse">
 				
 				<ul class="nav navbar-nav">
-					<li class="active"><a href="index.html">Home</a></li>
+					<li><a href="index.html">Home</a></li>
 					<li><a href="about.html">About</a></li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Projects <b class="caret"></b></a>
@@ -64,51 +136,44 @@
 </header>
 
 <main id="main">
-
-	<div class="container">
+	<div class="container project-detail-container">
+		<a href="index.html" class="back-link"><i class="fa fa-arrow-left"></i> Back to Home</a>
 		
-		<div class="row section topspace">
-			<div class="col-md-12">
-				<p class="lead text-center text-muted" style="font-size: 2.15rem; line-height: 1.8;">I truly believe that the stories worth telling are the ones that start as a dream. My goal is simple — to learn, create, and bring passion to everything I do. </p>
-			</div>
-		</div> <!-- / section -->
+		<!-- Loading State -->
+		<div id="project-loading" class="project-loading" style="display:none;">
+			<i class="fa fa-spinner fa-spin fa-3x"></i>
+			<p style="margin-top: 20px; font-size: 1.2rem;">Loading project details…</p>
+		</div>
 		
-		<div class="row section featured topspace">
-			<h2 class="section-title"><span>Skills</span></h2>
-			<div class="row">
-				<div class="col-sm-6 col-md-3 skill-card">
-					<h3 class="text-center">Content Creation & Digital Marketing</h3>
-					<p>I create content that actually connects with people. Whether it is a social media campaign, a branded graphic, or a short form video, I focus on making things that feel real and get results. I have grown event engagement by up to 30% using Adobe Creative Suite, Canva, and CapCut and I am always looking for the next creative challenge.</p>
-					<p class="text-center"><!-- <a href="" class="btn btn-action">Read more</a> --></p>
-				</div>
-				<div class="col-sm-6 col-md-3 skill-card">
-					<h3 class="text-center">UI/UX & Front-End Development</h3>
-					<p>I like building things that people actually enjoy using. I work with HTML, CSS, JavaScript, and Python to create clean and intuitive interfaces that make sense to the person on the other side of the screen. For me good design and good code should always work together.</p>
-					<p class="text-center"><!-- <a href="" class="btn btn-action">Read more</a> --></p>
-				</div>
-				<div class="col-sm-6 col-md-3 skill-card">
-					<h3 class="text-center">3D Modeling & Visual Design</h3>
-					<p>There is something exciting about taking an idea and making it three dimensional. Using Blender and the Adobe Creative Suite I explore how technical tools and creative vision come together. Animation and visual development are spaces I am genuinely passionate about and I am always pushing myself to get better.</p>
-					<p class="text-center"><!-- <a href="" class="btn btn-action">Read more</a> --></p>
-				</div>
-				<div class="col-sm-6 col-md-3 skill-card">
-					<h3 class="text-center">Research & Storytelling </h3>
-					<p>Every good project starts with really understanding what you are trying to say and who you are saying it to. I love digging into research and finding the story worth telling inside it. From coursework in Digital Storytelling and Directing to real campaign work, finding and shaping narratives is something I genuinely enjoy.</p>
-					<p class="text-center"><!-- <a href="" class="btn btn-action">Read more</a> --></p>
+		<!-- Error State -->
+		<div id="project-error" class="project-error" style="display:none;"></div>
+		
+		<!-- Project Content -->
+		<div id="project-content" style="display:none;">
+			<div class="row project-details">
+				<div class="col-md-8">
+					<h1 class="project-title" id="project-title"></h1>
+					
+					<div class="project-hero">
+						<img id="project-image" src="" alt="" style="display:none;">
+					</div>
+					
+					<div class="project-description" id="project-description"></div>
+					
+					<div id="project-tags-container" style="display:none;">
+						<strong>Tags:</strong>
+						<div class="project-tags" id="project-tags"></div>
+					</div>
+					
+					<div class="project-actions">
+						<a id="project-link-btn" href="#" class="btn btn-lg btn-primary btn-view-project" target="_blank" rel="noopener" style="display:none;">
+							<i class="fa fa-external-link"></i> View Live Project
+						</a>
+					</div>
 				</div>
 			</div>
-		</div> <!-- / section -->
-
-		<div class="row section recentworks topspace">
-            
-			<h2 class="section-title"><span>Recent Works</span></h2>
-            
-			<div id="projects-loading" class="text-center" style="padding:24px"><i class="fa fa-spinner fa-spin fa-2x"></i><p>Loading projects…</p></div>
-			<div class="thumbnails recentworks row" id="projects-container"></div>
-
-		</div> <!-- /section -->
-
-
+		</div>
+	</div>
 </main>
 
 <footer id="footer">
@@ -142,15 +207,11 @@
 	</div>
 </footer>
 
-
-
-
-
 <!-- JavaScript libs are placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/public-projects.js"></script>
+<script src="assets/js/project-detail.js"></script>
 <script src="assets/js/template.js"></script>
 </body>
 </html>
