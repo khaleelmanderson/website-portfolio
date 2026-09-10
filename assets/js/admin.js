@@ -8,17 +8,36 @@ const _createClient = (window.supabase && window.supabase.createClient) ? window
 if (!_createClient) throw new Error('Supabase client not found — include the CDN script before admin.js');
 const supabaseClient = _createClient(SUPABASE_URL, SUPABASE_KEY);
 
+async function requireAuthenticated() {
+  try {
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+    if (error) throw error;
+    if (!session) {
+      throw new Error('You must be logged in to perform this action.');
+    }
+  } catch (err) {
+    throw new Error(err.message || 'Unable to verify your session.');
+  }
+}
+
 $(document).ready(() => {
   const $loginSection = $('#login-section');
   const $dashboard = $('#dashboard-section');
   const $loginAlert = $('#login-alert');
   const $formAlert = $('#form-alert');
   let editingId = null;
+  let editingImageUrl = null;
 
   // Check session on load
   (async function checkSession(){
-    const { data } = await supabaseClient.auth.getSession();
-    if (data.session) showDashboard(); else showLogin();
+    try {
+      const { data, error } = await supabaseClient.auth.getSession();
+      if (error) throw error;
+      if (data.session) showDashboard(); else showLogin();
+    } catch (err) {
+      $loginAlert.text(err.message || 'Unable to verify your session.').show();
+      showLogin();
+    }
   })();
 
   // Login
@@ -37,14 +56,26 @@ $(document).ready(() => {
   });
 
   $('#logout-btn').on('click', async () => {
-    await supabaseClient.auth.signOut();
-    showLogin();
+    try {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) throw error;
+      showLogin();
+    } catch (err) {
+      $formAlert.removeClass('alert-success').addClass('alert-danger').text(err.message || 'Logout failed').show();
+    }
   });
 
   // Image preview
   $('#image').on('change', function(){
     const file = this.files[0];
     if (!file) { $('#image-preview').hide(); return; }
+    const validationError = validateImageFile(file);
+    if (validationError) {
+      $(this).val('');
+      $('#image-preview').hide();
+      $formAlert.removeClass('alert-success').addClass('alert-danger').text(validationError).show();
+      return;
+    }
     const url = URL.createObjectURL(file);
     $('#image-preview').attr('src', url).show();
   });
@@ -59,22 +90,32 @@ $(document).ready(() => {
 
   async function submitForm(status){
     $formAlert.hide();
+    try {
+      await requireAuthenticated();
+    } catch (err) {
+      $formAlert.removeClass('alert-success').addClass('alert-danger').text(err.message || 'You are not authorized to save projects.').show();
+      showLogin();
+      return;
+    }
+
     const title = $('#title').val().trim();
     const description = $('#description').val().trim();
-    const tags = $('#tags').val().split(',').map(t=>t.trim()).filter(Boolean);
-    const project_link = $('#project_link').val().trim() || null;
+    const tags = parseInputTags($('#tags').val());
+    const project_link = sanitizeProjectLink($('#project_link').val().trim() || null);
     const fileInput = document.getElementById('image');
     let image_url = null;
 
     try {
       if (fileInput.files && fileInput.files[0]){
         const file = fileInput.files[0];
+        const fileValidationError = validateImageFile(file);
+        if (fileValidationError) throw new Error(fileValidationError);
         const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'')}`;
         const path = filename;
         const { error: upErr } = await supabaseClient.storage.from('project-images').upload(path, file);
         if (upErr) throw upErr;
         const { data: urlData } = supabaseClient.storage.from('project-images').getPublicUrl(path);
-        image_url = urlData.publicUrl;
+        image_url = sanitizeImageUrl(urlData?.publicUrl || null);
       }
 
       const payload = { title, description, tags, project_link, image_url, status };
@@ -99,6 +140,7 @@ $(document).ready(() => {
 
   function resetForm(){
     editingId = null;
+    editingImageUrl = null;
     $('#project-id').val('');
     $('#project-form')[0].reset();
     $('#image-preview').hide();
@@ -120,10 +162,17 @@ $(document).ready(() => {
   }
 
   async function loadProjects(){
-    $('#projects-list').html('<p>Loading…</p>');
-    const { data, error } = await supabaseClient.from('Projects').select('*').order('created_at', { ascending: false });
-    if (error){ $('#projects-list').html(`<div class="alert alert-danger">${error.message}</div>`); return; }
-    renderProjects(data || []);
+    const $list = $('#projects-list');
+    $list.html('<p class="projects-loading">Loading...</p>');
+    try {
+      const { data, error } = await supabaseClient.from('Projects').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      renderProjects(data || []);
+    } catch (err) {
+      $list.html(`<div class="alert alert-danger">${escapeHtml(err.message || 'Unable to load projects.')}</div>`);
+    } finally {
+      $list.find('.projects-loading').remove();
+    }
   }
 
   function renderProjects(items){
@@ -135,10 +184,23 @@ $(document).ready(() => {
       const $mid = $(`<div class="col-sm-8"></div>`);
       const $right = $(`<div class="col-sm-2 text-right"></div>`);
 
-      if (p.image_url) $left.append(`<img src="${p.image_url}" style="max-width:100%;border-radius:4px">`);
-      $mid.append(`<strong>${escapeHtml(p.title || '')}</strong> <span class="label label-info status-badge">${p.status||''}</span><div>${escapeHtml((p.description||'').slice(0,200))}</div>`);
-      const editBtn = $(`<button class="btn btn-xs btn-primary" data-id="${p.id}">Edit</button>`).on('click', ()=> startEdit(p));
-      const delBtn = $(`<button class="btn btn-xs btn-danger" data-id="${p.id}">Delete</button>`).on('click', ()=> removeProject(p));
+      const safeImageUrl = sanitizeImageUrl(p.image_url);
+      if (safeImageUrl) $left.append(`<img src="${safeImageUrl}" alt="${escapeAttr(p.title || 'Project image')}" style="max-width:100%;border-radius:4px">`);
+      $mid.append(`<strong>${escapeHtml(p.title || '')}</strong> <span class="label label-info status-badge">${escapeHtml(p.status || '')}</span><div>${escapeHtml((p.description||'').slice(0,200))}</div>`);
+      const editBtn = $(`<button class="btn btn-xs btn-primary" data-id="${p.id}">Edit</button>`).on('click', async () => {
+        try {
+          await startEdit(p);
+        } catch (err) {
+          $formAlert.removeClass('alert-success').addClass('alert-danger').text(err.message || 'Unable to open the editor.').show();
+        }
+      });
+      const delBtn = $(`<button class="btn btn-xs btn-danger" data-id="${p.id}">Delete</button>`).on('click', async () => {
+        try {
+          await removeProject(p);
+        } catch (err) {
+          $formAlert.removeClass('alert-success').addClass('alert-danger').text(err.message || 'Delete failed').show();
+        }
+      });
       $right.append(editBtn).append(' ').append(delBtn);
 
       $row.append($left).append($mid).append($right);
@@ -146,14 +208,25 @@ $(document).ready(() => {
     });
   }
 
-  function startEdit(p){
+  async function startEdit(p){
+    try {
+      await requireAuthenticated();
+    } catch (err) {
+      $formAlert.removeClass('alert-success').addClass('alert-danger').text(err.message || 'You are not authorized to edit projects.').show();
+      showLogin();
+      return;
+    }
+
     editingId = p.id;
+    editingImageUrl = sanitizeImageUrl(p.image_url);
     $('#project-id').val(p.id);
     $('#title').val(p.title);
     $('#description').val(p.description);
-    $('#tags').val((p.tags||[]).join(', '));
-    $('#project_link').val(p.project_link || '');
-    if (p.image_url){ $('#image-preview').attr('src', p.image_url).show(); }
+    $('#tags').val(parseTags(p.tags).join(', '));
+    const safeProjectLink = sanitizeProjectLink(p.project_link);
+    $('#project_link').val(safeProjectLink || '');
+    const safeImageUrl = sanitizeImageUrl(p.image_url);
+    if (safeImageUrl){ $('#image-preview').attr('src', safeImageUrl).show(); }
     $('#publish-btn').hide();
     $('#draft-btn').hide();
     $('#update-btn').show();
@@ -162,22 +235,32 @@ $(document).ready(() => {
 
   async function updateProject(){
     $formAlert.hide();
+    try {
+      await requireAuthenticated();
+    } catch (err) {
+      $formAlert.removeClass('alert-success').addClass('alert-danger').text(err.message || 'You are not authorized to update projects.').show();
+      showLogin();
+      return;
+    }
+
     const title = $('#title').val().trim();
     const description = $('#description').val().trim();
-    const tags = $('#tags').val().split(',').map(t=>t.trim()).filter(Boolean);
-    const project_link = $('#project_link').val().trim() || null;
+    const tags = parseInputTags($('#tags').val());
+    const project_link = sanitizeProjectLink($('#project_link').val().trim() || null);
     const fileInput = document.getElementById('image');
     let image_url = null;
 
     try {
       if (fileInput.files && fileInput.files[0]){
         const file = fileInput.files[0];
+        const fileValidationError = validateImageFile(file);
+        if (fileValidationError) throw new Error(fileValidationError);
         const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'')}`;
         const path = filename;
         const { error: upErr } = await supabaseClient.storage.from('project-images').upload(path, file);
         if (upErr) throw upErr;
         const { data: urlData } = supabaseClient.storage.from('project-images').getPublicUrl(path);
-        image_url = urlData.publicUrl;
+        image_url = sanitizeImageUrl(urlData?.publicUrl || null);
       }
 
       // Update without changing status
@@ -186,8 +269,20 @@ $(document).ready(() => {
 
       const { error: updErr } = await supabaseClient.from('Projects').update(payload).eq('id', editingId);
       if (updErr) throw updErr;
+
+      let cleanupWarning = '';
+      if (image_url && editingImageUrl && image_url !== editingImageUrl) {
+        const oldImagePath = getStorageImagePath(editingImageUrl);
+        if (oldImagePath) {
+          const { error: removeErr } = await supabaseClient.storage.from('project-images').remove([oldImagePath]);
+          if (removeErr) {
+            console.error('Project image replacement cleanup failed:', removeErr);
+            cleanupWarning = ' Project updated, but the old image could not be deleted from storage.';
+          }
+        }
+      }
       
-      $formAlert.removeClass('alert-danger').addClass('alert-success').text('Project updated successfully!').show();
+      $formAlert.removeClass('alert-danger').addClass(cleanupWarning ? 'alert-warning' : 'alert-success').text(`Project updated successfully!${cleanupWarning}`).show();
       resetForm();
       loadProjects();
     } catch (err){
@@ -196,22 +291,107 @@ $(document).ready(() => {
   }
 
   async function removeProject(p){
+    try {
+      await requireAuthenticated();
+    } catch (err) {
+      $formAlert.removeClass('alert-success').addClass('alert-danger').text(err.message || 'You are not authorized to delete projects.').show();
+      showLogin();
+      return;
+    }
+
     if (!confirm('Delete this project? This will remove the database row and attempt to remove the image.')) return;
     try{
       const { error } = await supabaseClient.from('Projects').delete().eq('id', p.id);
       if (error) throw error;
-      // attempt to remove image from storage if image_url exists
-      if (p.image_url){
-        // extract path after /project-images/
-        const match = p.image_url.match(/project-images\/(.*)$/);
-        if (match && match[1]){
-          await supabaseClient.storage.from('project-images').remove([decodeURIComponent(match[1])]);
+      let cleanupWarning = '';
+      const imagePath = getStorageImagePath(p.image_url);
+      if (imagePath){
+        const { error: removeErr } = await supabaseClient.storage.from('project-images').remove([imagePath]);
+        if (removeErr) {
+          console.error('Deleted project image cleanup failed:', removeErr);
+          cleanupWarning = ' Project deleted, but its image could not be deleted from storage.';
         }
       }
+      if (cleanupWarning) {
+        $formAlert.removeClass('alert-danger').addClass('alert-warning').text(cleanupWarning).show();
+      }
       loadProjects();
-    }catch(err){ alert(err.message || 'Delete failed'); }
+    }catch(err){
+      $formAlert.removeClass('alert-success').addClass('alert-danger').text(err.message || 'Delete failed').show();
+    }
   }
 
   function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escapeAttr(str){ return String(str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function parseTags(tagsField){
+    if (!tagsField) return [];
+    if (Array.isArray(tagsField)) return tagsField;
+    if (typeof tagsField === 'string'){
+      try {
+        const parsed = JSON.parse(tagsField);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (err) {
+        return [];
+      }
+    }
+    return [];
+  }
+
+  function parseInputTags(tagsField){
+    return String(tagsField || '').split(',').map(tag => tag.trim()).filter(Boolean);
+  }
+
+  function validateImageFile(file) {
+    if (!file) return 'Please choose an image file.';
+    if (!file.type || !file.type.startsWith('image/')) {
+      return 'Only image files are allowed.';
+    }
+    const maxBytes = 5 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      return 'Image must be 5MB or smaller.';
+    }
+    return null;
+  }
+
+  function sanitizeImageUrl(url) {
+    if (!url || typeof url !== 'string') return null;
+    const trimmed = url.trim();
+    if (!trimmed) return null;
+    try {
+      const parsed = new URL(trimmed);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+      return parsed.href;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function getStorageImagePath(url) {
+    const safeImageUrl = sanitizeImageUrl(url);
+    if (!safeImageUrl) return null;
+    try {
+      const pathname = new URL(safeImageUrl).pathname;
+      const marker = '/project-images/';
+      const markerIndex = pathname.indexOf(marker);
+      if (markerIndex === -1) return null;
+      return decodeURIComponent(pathname.slice(markerIndex + marker.length));
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function sanitizeProjectLink(url) {
+    if (!url || typeof url !== 'string') return null;
+    const trimmed = url.trim();
+    if (!trimmed) return null;
+    try {
+      const parsed = new URL(trimmed);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+      return parsed.href;
+    } catch (err) {
+      return null;
+    }
+  }
 
 });
