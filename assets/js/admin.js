@@ -27,6 +27,7 @@ $(document).ready(() => {
   const $formAlert = $('#form-alert');
   let editingId = null;
   let editingImageUrl = null;
+  let editingGalleryImages = [];
 
   // Check session on load
   (async function checkSession(){
@@ -80,6 +81,17 @@ $(document).ready(() => {
     $('#image-preview').attr('src', url).show();
   });
 
+  $('#gallery-images').on('change', function(){
+    for (const file of this.files) {
+      const validationError = validateImageFile(file);
+      if (validationError) {
+        $(this).val('');
+        $formAlert.removeClass('alert-success').addClass('alert-danger').text(validationError).show();
+        return;
+      }
+    }
+  });
+
   // Publish / Draft buttons
   $('#publish-btn').on('click', () => submitForm('published'));
   $('#draft-btn').on('click', () => submitForm('draft'));
@@ -101,8 +113,13 @@ $(document).ready(() => {
     const title = $('#title').val().trim();
     const description = $('#description').val().trim();
     const tags = parseInputTags($('#tags').val());
+    const role = $('#role').val().trim() || null;
+    const tools = $('#tools').val().trim() || null;
+    const focus = $('#focus').val().trim() || null;
+    const key_highlights = JSON.stringify(parseLineInput($('#key_highlights').val()));
     const project_link = sanitizeProjectLink($('#project_link').val().trim() || null);
     const fileInput = document.getElementById('image');
+    const galleryInput = document.getElementById('gallery-images');
     let image_url = null;
 
     try {
@@ -110,15 +127,12 @@ $(document).ready(() => {
         const file = fileInput.files[0];
         const fileValidationError = validateImageFile(file);
         if (fileValidationError) throw new Error(fileValidationError);
-        const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'')}`;
-        const path = filename;
-        const { error: upErr } = await supabaseClient.storage.from('project-images').upload(path, file);
-        if (upErr) throw upErr;
-        const { data: urlData } = supabaseClient.storage.from('project-images').getPublicUrl(path);
-        image_url = sanitizeImageUrl(urlData?.publicUrl || null);
+        image_url = await uploadImageFile(file, 'cover');
       }
 
-      const payload = { title, description, tags, project_link, image_url, status };
+      const gallery_images = JSON.stringify(await uploadGalleryImages(galleryInput?.files || []));
+
+      const payload = { title, description, tags, role, tools, focus, key_highlights, gallery_images, project_link, image_url, status };
 
       if (editingId){
         // update
@@ -141,6 +155,7 @@ $(document).ready(() => {
   function resetForm(){
     editingId = null;
     editingImageUrl = null;
+    editingGalleryImages = [];
     $('#project-id').val('');
     $('#project-form')[0].reset();
     $('#image-preview').hide();
@@ -219,10 +234,15 @@ $(document).ready(() => {
 
     editingId = p.id;
     editingImageUrl = sanitizeImageUrl(p.image_url);
+    editingGalleryImages = parseTags(p.gallery_images);
     $('#project-id').val(p.id);
     $('#title').val(p.title);
     $('#description').val(p.description);
     $('#tags').val(parseTags(p.tags).join(', '));
+    $('#role').val(p.role || '');
+    $('#tools').val(p.tools || '');
+    $('#focus').val(p.focus || '');
+    $('#key_highlights').val(parseTags(p.key_highlights).join('\n'));
     const safeProjectLink = sanitizeProjectLink(p.project_link);
     $('#project_link').val(safeProjectLink || '');
     const safeImageUrl = sanitizeImageUrl(p.image_url);
@@ -246,8 +266,13 @@ $(document).ready(() => {
     const title = $('#title').val().trim();
     const description = $('#description').val().trim();
     const tags = parseInputTags($('#tags').val());
+    const role = $('#role').val().trim() || null;
+    const tools = $('#tools').val().trim() || null;
+    const focus = $('#focus').val().trim() || null;
+    const key_highlights = JSON.stringify(parseLineInput($('#key_highlights').val()));
     const project_link = sanitizeProjectLink($('#project_link').val().trim() || null);
     const fileInput = document.getElementById('image');
+    const galleryInput = document.getElementById('gallery-images');
     let image_url = null;
 
     try {
@@ -255,16 +280,14 @@ $(document).ready(() => {
         const file = fileInput.files[0];
         const fileValidationError = validateImageFile(file);
         if (fileValidationError) throw new Error(fileValidationError);
-        const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'')}`;
-        const path = filename;
-        const { error: upErr } = await supabaseClient.storage.from('project-images').upload(path, file);
-        if (upErr) throw upErr;
-        const { data: urlData } = supabaseClient.storage.from('project-images').getPublicUrl(path);
-        image_url = sanitizeImageUrl(urlData?.publicUrl || null);
+        image_url = await uploadImageFile(file, 'cover');
       }
 
+      const newGalleryImages = await uploadGalleryImages(galleryInput?.files || []);
+      const gallery_images = JSON.stringify(editingGalleryImages.concat(newGalleryImages));
+
       // Update without changing status
-      const payload = { title, description, tags, project_link };
+      const payload = { title, description, tags, role, tools, focus, key_highlights, gallery_images, project_link };
       if (image_url) payload.image_url = image_url;
 
       const { error: updErr } = await supabaseClient.from('Projects').update(payload).eq('id', editingId);
@@ -299,17 +322,19 @@ $(document).ready(() => {
       return;
     }
 
-    if (!confirm('Delete this project? This will remove the database row and attempt to remove the image.')) return;
+    if (!confirm('Delete this project? This will remove the database row and all associated images.')) return;
     try{
       const { error } = await supabaseClient.from('Projects').delete().eq('id', p.id);
       if (error) throw error;
       let cleanupWarning = '';
-      const imagePath = getStorageImagePath(p.image_url);
-      if (imagePath){
-        const { error: removeErr } = await supabaseClient.storage.from('project-images').remove([imagePath]);
+      const imagePaths = [p.image_url, ...parseTags(p.gallery_images)]
+        .map(getStorageImagePath)
+        .filter(Boolean);
+      if (imagePaths.length){
+        const { error: removeErr } = await supabaseClient.storage.from('project-images').remove(imagePaths);
         if (removeErr) {
           console.error('Deleted project image cleanup failed:', removeErr);
-          cleanupWarning = ' Project deleted, but its image could not be deleted from storage.';
+          cleanupWarning = ' Project deleted, but one or more images could not be deleted from storage.';
         }
       }
       if (cleanupWarning) {
@@ -340,6 +365,30 @@ $(document).ready(() => {
 
   function parseInputTags(tagsField){
     return String(tagsField || '').split(',').map(tag => tag.trim()).filter(Boolean);
+  }
+
+  function parseLineInput(value){
+    return String(value || '').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+  }
+
+  async function uploadImageFile(file, prefix){
+    const fileValidationError = validateImageFile(file);
+    if (fileValidationError) throw new Error(fileValidationError);
+    const filename = `${Date.now()}_${prefix}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'')}`;
+    const { error: uploadError } = await supabaseClient.storage.from('project-images').upload(filename, file);
+    if (uploadError) throw uploadError;
+    const { data: urlData } = supabaseClient.storage.from('project-images').getPublicUrl(filename);
+    const imageUrl = sanitizeImageUrl(urlData?.publicUrl || null);
+    if (!imageUrl) throw new Error('Unable to create a public URL for the uploaded image.');
+    return imageUrl;
+  }
+
+  async function uploadGalleryImages(files){
+    const imageUrls = [];
+    for (let index = 0; index < files.length; index++) {
+      imageUrls.push(await uploadImageFile(files[index], `gallery_${index}`));
+    }
+    return imageUrls;
   }
 
   function validateImageFile(file) {

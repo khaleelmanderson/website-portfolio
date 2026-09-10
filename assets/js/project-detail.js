@@ -89,6 +89,41 @@ async function loadProjectDetail(){
       $('#project-tags').html(tagsHtml);
       $('#project-tags-container').show();
     }
+
+    // Handle key highlights
+    const highlightArray = parseTags(data.key_highlights);
+    if (highlightArray.length > 0){
+      const highlightsHtml = highlightArray
+        .map(highlight => `<li>${escapeHtml(highlight)}</li>`)
+        .join('');
+      $('#project-highlights').html(highlightsHtml);
+      $('#project-highlights-container').show();
+    }
+
+    // Handle project snapshot
+    const snapshotFields = [
+      ['Role', data.role],
+      ['Tools', data.tools],
+      ['Focus', data.focus]
+    ].filter(([, value]) => value !== null && value !== undefined && String(value).trim());
+    if (snapshotFields.length > 0){
+      const snapshotHtml = snapshotFields
+        .map(([label, value]) => `<li><strong>${label}:</strong> ${escapeHtml(String(value).trim())}</li>`)
+        .join('');
+      $('#project-snapshot').html(snapshotHtml);
+      $('#project-snapshot-container').show();
+    }
+
+    // Handle gallery images
+    const galleryImages = parseTags(data.gallery_images)
+      .filter(imageUrl => typeof imageUrl === 'string' && imageUrl.trim());
+    if (galleryImages.length > 0){
+      const galleryHtml = galleryImages
+        .map(imageUrl => `<div class="col-xs-12 col-sm-6 col-md-4"><img src="${escapeAttr(imageUrl)}" alt="${escapeAttr(data.title || 'Project gallery image')}"></div>`)
+        .join('');
+      $('#project-gallery').html(galleryHtml);
+      $('#project-gallery-container').show();
+    }
     
     // Handle project link
     if (data.project_link){
@@ -109,6 +144,10 @@ async function loadProjectDetail(){
 
 function escapeHtml(str){
   return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function escapeAttr(str){
+  return escapeHtml(str).replace(/"/g, '&quot;');
 }
 
 $(document).ready(() => {
