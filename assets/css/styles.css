@@ -1246,14 +1246,30 @@ body.home #head {
   background: var(--sunset-indigo);
   position: relative;
   overflow: hidden;
-  padding: 70px 0 90px 0;
+  padding: 70px 0 100px 0;
+}
+body.home .hero-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+body.home .hero-visual {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body.home .hero-content {
+  flex: 1 1 auto;
 }
 body.home #head #logo {
   position: relative;
   z-index: 2;
-}
-body.home #head img.img-circle {
-  border-color: var(--sunset-sand);
+  display: block;
+  text-align: left;
+  margin: 0;
 }
 body.home #head .title {
   font-family: var(--sunset-font-heading);
@@ -1299,30 +1315,40 @@ body.home .hero-stripe {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 8px;
+  width: 28px;
   z-index: 1;
   background: repeating-linear-gradient(
     180deg,
-    var(--sunset-sun) 0px, var(--sunset-sun) 22px,
-    var(--sunset-citrus) 22px, var(--sunset-citrus) 44px,
-    var(--sunset-sea) 44px, var(--sunset-sea) 66px
+    var(--sunset-sun) 0px, var(--sunset-sun) 70px,
+    var(--sunset-citrus) 70px, var(--sunset-citrus) 140px,
+    var(--sunset-sea) 140px, var(--sunset-sea) 210px
   );
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.25);
+}
+@media (max-width: 767px) {
+  body.home .hero-stripe {
+    width: 16px;
+  }
 }
 
-/* Hero sunset circle */
+/* Hero sunset circle — standalone decorative shape (no photo) */
 body.home .hero-sunset {
-  position: absolute;
+  position: relative;
   z-index: 1;
-  top: 14px;
-  left: 50%;
-  width: 200px;
-  height: 200px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   overflow: hidden;
   background: linear-gradient(180deg, var(--sunset-sun) 0%, var(--sunset-citrus) 100%);
   opacity: 0;
-  transform: translate(-50%, 30px);
+  transform: translateY(30px);
   animation: sunset-rise-in 0.5s ease forwards, sunset-glow-pulse 5s ease-in-out 0.5s infinite;
+}
+@media (max-width: 480px) {
+  body.home .hero-sunset {
+    width: 150px;
+    height: 150px;
+  }
 }
 body.home .hero-sunset::after {
   content: "";
@@ -1356,8 +1382,8 @@ body.home .hero-wave path {
 
 /* Hero load-in keyframes (play once, no looping) */
 @keyframes sunset-rise-in {
-  from { opacity: 0; transform: translate(-50%, 30px); }
-  to   { opacity: 1; transform: translate(-50%, 0); }
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes sunset-wave-draw {
   to { stroke-dashoffset: 0; }
@@ -1370,6 +1396,17 @@ body.home .hero-wave path {
 @keyframes sunset-glow-pulse {
   0%, 100% { box-shadow: 0 0 40px 0 rgba(242, 169, 59, 0.3); }
   50%      { box-shadow: 0 0 60px 8px rgba(242, 169, 59, 0.5); }
+}
+
+@media (max-width: 767px) {
+  body.home .hero-inner {
+    flex-direction: column;
+    gap: 28px;
+  }
+  body.home #head #logo,
+  body.home .hero-content {
+    text-align: center;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1449,13 +1486,16 @@ body.home .details {
 /* Corner accent mark on each card's thumbnail */
 body.home .thumbnail::after {
   content: "";
+  display: block;
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 16px;
-  height: 16px;
-  background: var(--sunset-vermilion);
-  z-index: 3;
+  width: 18px;
+  height: 18px;
+  background-color: #D65438; /* plain hex fallback in case custom properties fail to resolve */
+  background-color: var(--sunset-vermilion);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  z-index: 10;
   pointer-events: none;
   transition: transform 0.3s ease;
 }
