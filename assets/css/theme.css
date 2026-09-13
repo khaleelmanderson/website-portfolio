@@ -3,10 +3,12 @@
                     SHARED "SUNSET" THEME TOKENS
 
   Single source of truth for the color palette and font imports used
-  by the redesigned pages (currently index.html and project-detail.html).
-  Link this file BEFORE styles.css on any page that opts into the
-  theme, then scope that page's rules under its own body class
-  (body.home, body.project-detail, …) inside styles.css.
+  by the redesigned pages: index.html, project-detail.html, and
+  admin.html. Link this file BEFORE styles.css (or a page's own
+  inline <style>) on any page that opts into the theme, then scope
+  that page's rules under its own body class (body.home,
+  body.project-detail, …) — or, for admin.html, plain element/id
+  selectors, since that page doesn't share DOM with the others.
 
 **********************************************************************/
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;500;600;700&family=Manrope:wght@400;500&display=swap');
@@ -19,6 +21,31 @@
   --sea: #2C8F8A;
   --vermil: #D65438;
   --sand: #EFE6D3;
+  /* Same value as --sand, expressed as an R,G,B triplet so it can be used
+     inside rgba(var(--sand-rgb), alpha) for subtle tinted borders/dividers/
+     muted text. Using this instead of a literal rgba(239, 230, 211, X)
+     everywhere means those spots correctly flip when the theme does —
+     a literal rgba() value can't respond to a custom-property override. */
+  --sand-rgb: 239, 230, 211;
+  /* Fixed dark color for text sitting on a bright accent chip (the sun/
+     citrus/sea/vermil buttons and badges). Those accent colors don't change
+     between themes, so the text on them shouldn't either — intentionally
+     NOT the same token as --indigo, which DOES change with the theme below. */
+  --ink-on-accent: #101E30;
   --font-heading: 'Fraunces', Georgia, serif;
   --font-body: 'Manrope', "Open sans", Helvetica, Arial, sans-serif;
+}
+
+/* Light variant. Toggled by adding this class to <body>:
+   - index.html / project-detail.html: the theme-toggle button via
+     assets/js/template.js
+   - admin.html: its own small inline toggle script (no template.js there —
+     see the comment in admin.html for why)
+   Only the base surface/ink tokens change; the sun/citrus/sea/vermil accent
+   colors and --ink-on-accent stay identical in both themes. */
+body.light-theme {
+  --indigo: #FBF3E4;
+  --panel: #FFFFFF;
+  --sand: #1B2A3D;
+  --sand-rgb: 27, 42, 61;
 }

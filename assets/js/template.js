@@ -27,10 +27,15 @@ jQuery(document).ready(function($) {
 		});
 	}
 	
+	// The redesigned pages (index.html/project-detail.html) are dark by
+	// default now, so the toggle's job is to switch TO the light variant —
+	// body.light-theme, defined in assets/css/theme.css — rather than into a
+	// dark one. The icon reflects the CURRENT theme (🌙 while dark, ☀️ once
+	// switched to light), matching the button's starting icon in the HTML.
 	var toggleTheme = function() {
-		$('body').toggleClass('dark-theme');
-		var isDark = $('body').hasClass('dark-theme');
-		themeToggle.text(isDark ? '🌙' : '☀️');
+		$('body').toggleClass('light-theme');
+		var isLight = $('body').hasClass('light-theme');
+		themeToggle.text(isLight ? '☀️' : '🌙');
 	};
 
 	// run our function on load

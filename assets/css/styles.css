@@ -11,58 +11,12 @@ body {
   background-image: linear-gradient(135deg, #f8f7f2 0%, #f1efe7 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
   transition: background 0.3s ease, color 0.3s ease;
 }
-body.dark-theme {
-  color: #f5f2eb;
-  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 28%), linear-gradient(135deg, #161616 0%, #0f172a 100%);
-}
-body.dark-theme .navbar-default,
-body.dark-theme .navbar-default .navbar-nav > li > a,
-body.dark-theme .navbar-default .navbar-nav > .active > a,
-body.dark-theme .navbar-default .navbar-nav > .open > a,
-body.dark-theme .lead,
-body.dark-theme .skill-card,
-body.dark-theme .thumbnail,
-body.dark-theme #footer,
-body.dark-theme #underfooter {
-  background-color: #1f2937;
-  color: #f5f2eb;
-}
-body.dark-theme .section-title,
-body.dark-theme h1,
-body.dark-theme h2,
-body.dark-theme h3,
-body.dark-theme h4,
-body.dark-theme h5,
-body.dark-theme h6,
-body.dark-theme p,
-body.dark-theme .details,
-body.dark-theme .title,
-body.dark-theme .tagline,
-body.dark-theme .widget-title,
-body.dark-theme .skill-card h3,
-body.dark-theme .skill-card p {
-  color: #f5f2eb;
-}
-body.dark-theme .lead,
-body.dark-theme .skill-card,
-body.dark-theme .thumbnail {
-  border-color: rgba(255,255,255,0.12);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-}
-body.dark-theme .navbar-default .navbar-nav > li > a:hover,
-body.dark-theme .navbar-default .navbar-nav > li > a:focus {
-  color: #ffffff;
-  background-color: #111827;
-}
-body.dark-theme a {
-  color: #fbbf24;
-}
-body.dark-theme a:hover {
-  color: #fde68a;
-}
-body.dark-theme #head {
-  box-shadow: inset 0 0 0 2000px rgba(0,0,0,0.25);
-}
+/* Note: this file used to have a large body.dark-theme block here, styling
+   the ORIGINAL (pre-"Sunset") light template with a generic dark mode. That
+   toggle now uses body.light-theme instead (see assets/js/template.js) and
+   the redesigned pages define their own light/dark tokens via
+   assets/css/theme.css, so those old rules were permanently unreachable —
+   removed rather than left as dead code. */
 .theme-toggle {
   position: absolute;
   top: 18px;
@@ -83,10 +37,10 @@ body.dark-theme #head {
 .theme-toggle:hover {
   transform: scale(1.04);
 }
-body.dark-theme .theme-toggle {
-  background: #374151;
-  color: #f5f2eb;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+/* A plain white circle reads fine floating on the dark hero, but needs a
+   touch more definition once the page itself goes light. */
+body.light-theme .theme-toggle {
+  box-shadow: 0 4px 12px rgba(27, 42, 61, 0.2), 0 0 0 1px rgba(27, 42, 61, 0.08);
 }
 .topspace {
   margin-top: 40px;
@@ -541,11 +495,6 @@ img {
   font-size: 1.04rem;
   line-height: 1.75;
   color: #5a4747;
-}
-body.dark-theme .featured .skill-card {
-  background: linear-gradient(135deg, rgba(31, 41, 55, 0.96) 0%, rgba(17, 24, 39, 0.95) 100%);
-  border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
 }
 /* Section - Recent works */
 .placeholder-image {
@@ -1173,7 +1122,7 @@ body.home a:hover {
 }
 body.home .section-title span:before,
 body.home .section-title span:after {
-  border-color: rgba(239, 230, 211, 0.25);
+  border-color: rgba(var(--sand-rgb), 0.25);
 }
 body.home .lead {
   background: var(--panel);
@@ -1234,13 +1183,13 @@ body.home .navbar-default .navbar-nav > .open > a:focus {
 }
 body.home .dropdown ul.dropdown-menu {
   background-color: var(--panel);
-  border: 1px solid rgba(239, 230, 211, 0.12);
+  border: 1px solid rgba(var(--sand-rgb), 0.12);
 }
 body.home .dropdown ul.dropdown-menu > li > a {
   color: var(--sand);
 }
 body.home .dropdown ul.dropdown-menu > li > a:hover {
-  background-color: rgba(239, 230, 211, 0.08);
+  background-color: rgba(var(--sand-rgb), 0.08);
   color: var(--sun);
 }
 
@@ -1277,7 +1226,7 @@ body.home #head #logo {
 body.home #head .title {
   font-family: 'Fraunces', serif;
   font-weight: 700;
-  color: #EFE6D3;
+  color: var(--sand);
   font-size: clamp(40px, 5.5vw, 64px);
   line-height: 1.03;
   text-shadow: none;
@@ -1304,7 +1253,7 @@ body.home .hero-badge {
   font-size: 0.8125rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--sand);
+  color: var(--ink-on-accent);
   background: var(--vermil);
   padding: 6px 20px;
   border-radius: 999px;
@@ -1431,7 +1380,7 @@ body.home .wave path {
 /* Skills cards — left border accent, shifts on hover, card lift */
 body.home .featured .skill-card {
   background: var(--panel);
-  border: 1px solid rgba(239, 230, 211, 0.08);
+  border: 1px solid rgba(var(--sand-rgb), 0.08);
   border-left: 4px solid var(--sea);
   border-radius: 10px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
@@ -1450,7 +1399,7 @@ body.home .featured .skill-card h3 {
   color: var(--sand);
 }
 body.home .featured .skill-card p {
-  color: rgba(239, 230, 211, 0.82);
+  color: rgba(var(--sand-rgb), 0.82);
 }
 
 /* Recent works / project cards */
@@ -1480,15 +1429,15 @@ body.home .thumbnail:hover .title {
 }
 body.home .thumbnail .cover {
   background: linear-gradient(135deg, rgba(16, 30, 48, 0.88), rgba(214, 84, 56, 0.35));
-  border-color: rgba(239, 230, 211, 0.2);
+  border-color: rgba(var(--sand-rgb), 0.2);
 }
 body.home .thumbnail .cover .more {
   background: var(--vermil);
-  color: var(--sand);
+  color: var(--ink-on-accent);
   text-shadow: none;
 }
 body.home .details {
-  color: rgba(239, 230, 211, 0.65);
+  color: rgba(var(--sand-rgb), 0.65);
 }
 /* Corner accent mark on each card's thumbnail */
 body.home .thumbnail::after {
@@ -1515,7 +1464,7 @@ body.home .thumbnail:hover::after {
 /* Footer */
 body.home #footer {
   background: var(--panel);
-  color: rgba(239, 230, 211, 0.75);
+  color: rgba(var(--sand-rgb), 0.75);
 }
 body.home #footer a {
   color: var(--sand);
@@ -1529,7 +1478,7 @@ body.home #footer h3.widget-title {
 }
 body.home #underfooter {
   background: var(--indigo);
-  color: rgba(239, 230, 211, 0.6);
+  color: rgba(var(--sand-rgb), 0.6);
 }
 
 /*********************************************************************
@@ -1624,13 +1573,13 @@ body.project-detail .navbar-default .navbar-nav > .open > a:focus {
 }
 body.project-detail .dropdown ul.dropdown-menu {
   background-color: var(--panel);
-  border: 1px solid rgba(239, 230, 211, 0.12);
+  border: 1px solid rgba(var(--sand-rgb), 0.12);
 }
 body.project-detail .dropdown ul.dropdown-menu > li > a {
   color: var(--sand);
 }
 body.project-detail .dropdown ul.dropdown-menu > li > a:hover {
-  background-color: rgba(239, 230, 211, 0.08);
+  background-color: rgba(var(--sand-rgb), 0.08);
   color: var(--sun);
 }
 /* Same sticky-nav opacity fix as the homepage (see body.home .navbar.stick) */
@@ -1643,7 +1592,7 @@ body.project-detail .navbar.stick {
 /* Footer */
 body.project-detail #footer {
   background: var(--panel);
-  color: rgba(239, 230, 211, 0.75);
+  color: rgba(var(--sand-rgb), 0.75);
 }
 body.project-detail #footer a {
   color: var(--sand);
@@ -1657,7 +1606,7 @@ body.project-detail #footer h3.widget-title {
 }
 body.project-detail #underfooter {
   background: var(--indigo);
-  color: rgba(239, 230, 211, 0.6);
+  color: rgba(var(--sand-rgb), 0.6);
 }
 
 /* Page container + back link */
@@ -1747,7 +1696,7 @@ body.project-detail .frame::after {
 body.project-detail .project-description {
   font-size: 1.05rem;
   line-height: 1.8;
-  color: rgba(239, 230, 211, 0.85);
+  color: rgba(var(--sand-rgb), 0.85);
   margin: 0 0 30px;
 }
 
@@ -1769,7 +1718,7 @@ body.project-detail .project-highlights li {
   padding-left: 26px;
   margin-bottom: 12px;
   line-height: 1.6;
-  color: rgba(239, 230, 211, 0.9);
+  color: rgba(var(--sand-rgb), 0.9);
 }
 body.project-detail .project-highlights li::before {
   content: "";
@@ -1805,7 +1754,7 @@ body.project-detail .project-snapshot-list li {
   align-items: baseline;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(239, 230, 211, 0.12);
+  border-bottom: 1px solid rgba(var(--sand-rgb), 0.12);
   font-size: 0.95rem;
 }
 body.project-detail .project-snapshot-list li:last-child {
@@ -1829,7 +1778,7 @@ body.project-detail .btn-view-project {
   display: block;
   text-align: center;
   background: var(--sun);
-  color: var(--indigo);
+  color: var(--ink-on-accent);
   font-weight: 600;
   text-decoration: none;
   padding: 12px 20px;
@@ -1839,7 +1788,7 @@ body.project-detail .btn-view-project {
 }
 body.project-detail .btn-view-project:hover {
   background: var(--citrus);
-  color: var(--sand);
+  color: var(--ink-on-accent);
   transform: translateY(-2px);
 }
 
@@ -1849,7 +1798,7 @@ body.project-detail .project-tags-label {
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: rgba(239, 230, 211, 0.65);
+  color: rgba(var(--sand-rgb), 0.65);
   margin-top: 20px;
   margin-bottom: 10px;
   font-weight: 600;
@@ -1880,7 +1829,7 @@ body.project-detail .project-tag {
 body.project-detail .project-gallery {
   margin-top: 50px;
   padding-top: 40px;
-  border-top: 1px solid rgba(239, 230, 211, 0.12);
+  border-top: 1px solid rgba(var(--sand-rgb), 0.12);
 }
 body.project-detail .project-gallery h2 {
   font-size: 1.6rem;
