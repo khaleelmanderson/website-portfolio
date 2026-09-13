@@ -45,6 +45,11 @@
             border-radius: 4px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.3);
         }
+        /* Clears the fixed .form-action-bar so it never covers the bottom of
+           the page (the projects list below the form, in particular). */
+        #dashboard-section {
+            padding-bottom: 100px;
+        }
         .form-section {
             margin-bottom: 30px;
         }
@@ -58,6 +63,7 @@
             background-color: var(--indigo);
             color: var(--sand);
             border: 1px solid var(--panel);
+            border-radius: 10px;
             box-shadow: none;
         }
         .form-control:focus {
@@ -71,6 +77,42 @@
         }
         .form-text.text-muted {
             color: rgba(239, 230, 211, 0.55);
+        }
+        /* Compose form sections — three labeled panels (Basics/Details/Media) */
+        .form-panel {
+            background: var(--panel);
+            border: 1px solid rgba(16, 30, 48, 0.4);
+            border-radius: 16px;
+            padding: 26px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        }
+        .form-panel-title {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: var(--sun);
+            font-size: 1.1rem;
+            margin: 0 0 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(239, 230, 211, 0.15);
+        }
+        .form-panel .form-group:last-child {
+            margin-bottom: 0;
+        }
+        /* Role / Tools side-by-side */
+        .form-row-2col {
+            display: flex;
+            gap: 20px;
+        }
+        .form-row-2col .form-group {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        @media (max-width: 767px) {
+            .form-row-2col {
+                flex-direction: column;
+                gap: 0;
+            }
         }
         #image-preview {
             max-width: 200px;
@@ -107,8 +149,28 @@
         #alert-container {
             margin-bottom: 20px;
         }
-        .btn-group-form {
-            margin-top: 20px;
+        /* Sticky bottom bar for Publish/Save as Draft/Update/Cancel — fixed to
+           the viewport so it stays reachable regardless of form length.
+           #dashboard-section gets matching padding-bottom lower down so it
+           never covers the last section's content. */
+        .form-action-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--indigo);
+            border-top: 1px solid rgba(239, 230, 211, 0.12);
+            box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.35);
+        }
+        .form-action-bar .btn {
+            border-radius: 999px;
+            padding: 10px 30px;
         }
         /* Publish / Save as Draft / Update / Cancel — retinted to the palette,
            dark text on the lighter accent colors for contrast */
@@ -164,7 +226,7 @@
         }
         .gallery-upload-dropzone {
             border: 1px dashed var(--sea);
-            border-radius: 4px;
+            border-radius: 14px;
             background: var(--indigo);
             padding: 18px 16px;
             text-align: center;
@@ -303,86 +365,103 @@
                 <!-- Alert Container -->
                 <div id="form-alert" class="alert" style="display:none; margin-top:20px;"></div>
 
-                <!-- Compose Form -->
+                <!-- Compose Form (same form/sections for both create and edit — edit mode
+                     just repopulates these fields and swaps which buttons are visible) -->
                 <div class="form-section">
                     <h3>Compose New Project</h3>
                     <form id="project-form">
                         <input type="hidden" id="project-id">
-                        
-                        <div class="form-group">
-                            <label for="title">Project Title *</label>
-                            <input type="text" class="form-control" id="title" required>
+
+                        <div class="form-panel">
+                            <h4 class="form-panel-title">Basics</h4>
+
+                            <div class="form-group">
+                                <label for="title">Project Title *</label>
+                                <input type="text" class="form-control" id="title" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Description *</label>
+                                <textarea class="form-control" id="description" rows="5" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tags">Tags (comma-separated)</label>
+                                <input type="text" class="form-control" id="tags" placeholder="e.g., design, web, react">
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="description">Description *</label>
-                            <textarea class="form-control" id="description" rows="5" required></textarea>
-                        </div>
+                        <div class="form-panel">
+                            <h4 class="form-panel-title">Details</h4>
 
-                        <div class="form-group">
-                            <label for="tags">Tags (comma-separated)</label>
-                            <input type="text" class="form-control" id="tags" placeholder="e.g., design, web, react">
-                        </div>
+                            <div class="form-row-2col">
+                                <div class="form-group">
+                                    <label for="role">Role</label>
+                                    <input type="text" class="form-control" id="role">
+                                </div>
 
-                        <div class="form-group">
-                            <label for="role">Role</label>
-                            <input type="text" class="form-control" id="role">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="tools">Tools</label>
-                            <input type="text" class="form-control" id="tools">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="focus">Focus</label>
-                            <input type="text" class="form-control" id="focus">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="key_highlights">Key Highlights</label>
-                            <textarea class="form-control" id="key_highlights" rows="4" placeholder="One highlight per line"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="project_link">Project Link</label>
-                            <input type="url" class="form-control" id="project_link" placeholder="https://...">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="image">Project Image</label>
-                            <input type="file" class="form-control" id="image" accept="image/*">
-                            <small class="form-text text-muted">JPG, PNG, or GIF</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Additional Gallery Images</label>
-                            <div id="gallery-dropzone" class="gallery-upload-dropzone" tabindex="0" role="button" aria-label="Upload gallery images">
-                                <input type="file" id="gallery-images" accept="image/*" multiple style="display:none;">
-                                <div class="gallery-upload-content">
-                                    <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
-                                    <div>
-                                        <strong>Drag &amp; drop images here</strong>
-                                        <span>or <button type="button" class="btn btn-link gallery-browse-btn">Choose files</button></span>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="tools">Tools</label>
+                                    <input type="text" class="form-control" id="tools">
                                 </div>
                             </div>
-                            <div id="gallery-preview" class="gallery-upload-preview" aria-live="polite"></div>
-                            <div id="gallery-invalid-list" class="gallery-invalid-list" aria-live="polite"></div>
-                            <small class="form-text text-muted">JPG, PNG, or GIF; 5MB max per image</small>
+
+                            <div class="form-group">
+                                <label for="focus">Focus</label>
+                                <input type="text" class="form-control" id="focus">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="key_highlights">Key Highlights</label>
+                                <textarea class="form-control" id="key_highlights" rows="4" placeholder="One highlight per line"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="project_link">Project Link</label>
+                                <input type="url" class="form-control" id="project_link" placeholder="https://...">
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <img id="image-preview" alt="Preview" style="display:none;">
-                        </div>
+                        <div class="form-panel">
+                            <h4 class="form-panel-title">Media</h4>
 
-                        <div class="btn-group-form">
-                            <button type="button" id="publish-btn" class="btn btn-success">Publish</button>
-                            <button type="button" id="draft-btn" class="btn btn-info">Save as Draft</button>
-                            <button type="button" id="update-btn" class="btn btn-warning" style="display:none;">Update</button>
-                            <button type="button" id="cancel-btn" class="btn btn-default" style="display:none;">Cancel</button>
+                            <div class="form-group">
+                                <label for="image">Project Image</label>
+                                <input type="file" class="form-control" id="image" accept="image/*">
+                                <small class="form-text text-muted">JPG, PNG, or GIF</small>
+                            </div>
+
+                            <div class="form-group">
+                                <img id="image-preview" alt="Preview" style="display:none;">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Additional Gallery Images</label>
+                                <div id="gallery-dropzone" class="gallery-upload-dropzone" tabindex="0" role="button" aria-label="Upload gallery images">
+                                    <input type="file" id="gallery-images" accept="image/*" multiple style="display:none;">
+                                    <div class="gallery-upload-content">
+                                        <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+                                        <div>
+                                            <strong>Drag &amp; drop images here</strong>
+                                            <span>or <button type="button" class="btn btn-link gallery-browse-btn">Choose files</button></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="gallery-preview" class="gallery-upload-preview" aria-live="polite"></div>
+                                <div id="gallery-invalid-list" class="gallery-invalid-list" aria-live="polite"></div>
+                                <small class="form-text text-muted">JPG, PNG, or GIF; 5MB max per image</small>
+                            </div>
                         </div>
                     </form>
+
+                    <!-- Sticky action bar — same buttons/IDs/click handlers as before,
+                         just relocated out of the form flow -->
+                    <div class="form-action-bar">
+                        <button type="button" id="publish-btn" class="btn btn-success">Publish</button>
+                        <button type="button" id="draft-btn" class="btn btn-info">Save as Draft</button>
+                        <button type="button" id="update-btn" class="btn btn-warning" style="display:none;">Update</button>
+                        <button type="button" id="cancel-btn" class="btn btn-default" style="display:none;">Cancel</button>
+                    </div>
                 </div>
 
                 <!-- Projects List -->
