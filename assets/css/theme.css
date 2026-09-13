@@ -1,0 +1,24 @@
+/*********************************************************************
+
+                    SHARED "SUNSET" THEME TOKENS
+
+  Single source of truth for the color palette and font imports used
+  by the redesigned pages (currently index.html and project-detail.html).
+  Link this file BEFORE styles.css on any page that opts into the
+  theme, then scope that page's rules under its own body class
+  (body.home, body.project-detail, …) inside styles.css.
+
+**********************************************************************/
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;500;600;700&family=Manrope:wght@400;500&display=swap');
+
+:root {
+  --indigo: #101E30;
+  --panel: #172A40;
+  --sun: #F2A93B;
+  --citrus: #E8623D;
+  --sea: #2C8F8A;
+  --vermil: #D65438;
+  --sand: #EFE6D3;
+  --font-heading: 'Fraunces', Georgia, serif;
+  --font-body: 'Manrope', "Open sans", Helvetica, Arial, sans-serif;
+}
