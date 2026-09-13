@@ -1382,8 +1382,13 @@ body.home .wave {
   opacity: 0.4;
 }
 body.home .wave path {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
+  /* The path's actual total length is ~1655 units (measured via
+     getTotalLength()). The dasharray/dashoffset must meet or exceed
+     that, or the dash pattern repeats partway through and the curve
+     appears to cut off/flatten before the right edge. 1700 gives
+     safe headroom above the measured length. */
+  stroke-dasharray: 1700;
+  stroke-dashoffset: 1700;
   animation: sunset-wave-draw 0.5s ease 0.1s forwards;
 }
 
