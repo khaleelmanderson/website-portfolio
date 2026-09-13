@@ -1192,6 +1192,14 @@ body.home .navbar-default {
   background-color: var(--sunset-indigo);
   border-color: var(--sunset-indigo);
 }
+/* The base template makes the sticky nav 85% opaque (.navbar.stick), which
+   lets scrolled-past content show through it. Keep it fully opaque here so
+   it reads as a solid bar instead of overlapping the page underneath. */
+body.home .navbar.stick {
+  opacity: 1;
+  background-color: var(--sunset-indigo);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
 body.home .navbar-default .navbar-nav > li > a {
   color: var(--sunset-sand);
   background: none;
@@ -1486,6 +1494,7 @@ body.home .details {
 body.home .thumbnail::after {
   content: "";
   display: block;
+  box-sizing: border-box;
   position: absolute;
   top: 10px;
   right: 10px;
@@ -1493,7 +1502,8 @@ body.home .thumbnail::after {
   height: 18px;
   background-color: #D65438; /* plain hex fallback in case custom properties fail to resolve */
   background-color: var(--sunset-vermilion);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--sunset-sand);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   z-index: 10;
   pointer-events: none;
   transition: transform 0.3s ease;
