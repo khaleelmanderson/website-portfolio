@@ -1,9 +1,13 @@
 jQuery(document).ready(function($) {
 
-	var my_nav = $('.navbar-sticky'); 
+	var my_nav = $('.navbar-sticky');
 	var themeToggle = $('#theme-toggle');
-	// grab the initial top offset of the navigation 
-	var sticky_navigation_offset_top = my_nav.offset().top;
+	// grab the initial top offset of the navigation — guarded because several
+	// pages don't have a .navbar-sticky element at all, and .offset() on an
+	// empty jQuery collection returns undefined; reading .top off that used
+	// to throw here and silently abort the rest of this ready-callback,
+	// including the theme-toggle click handler at the bottom.
+	var sticky_navigation_offset_top = my_nav.length ? my_nav.offset().top : 0;
 	
 	// our function that decides weather the navigation bar should have "fixed" css position or not.
 	var sticky_navigation = function(){

@@ -1851,3 +1851,245 @@ body.project-detail .project-gallery .frame {
 body.project-detail .project-gallery .frame:hover {
   transform: scale(1.02) rotate(0deg);
 }
+
+/*********************************************************************
+
+    SITE PAGES — About, Sketchbook, and the individual project pages
+  Same design system as the other three pages, scoped under
+  body.site-page. These pages don't get the homepage's hero
+  decorations (sunset circle/wave/stripe) — same minimal solid-dark
+  header treatment as body.project-detail, since none of them have a
+  bespoke hero of their own.
+
+**********************************************************************/
+body.site-page {
+  background: var(--indigo);
+  color: var(--sand);
+  font-family: var(--font-body);
+}
+body.site-page h1,
+body.site-page h2,
+body.site-page h3,
+body.site-page h4,
+body.site-page h5,
+body.site-page h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--sand);
+}
+body.site-page p {
+  font-family: var(--font-body);
+}
+body.site-page a {
+  color: var(--citrus);
+}
+body.site-page a:hover {
+  color: var(--sun);
+}
+
+/* Header / nav — same solid dark bar as project-detail.html */
+body.site-page #head {
+  background: var(--indigo);
+}
+body.site-page #head .title,
+body.site-page #head .tagline {
+  color: var(--sand);
+  text-shadow: none;
+}
+body.site-page #head .tagline a {
+  color: var(--sun);
+}
+body.site-page .navbar-default {
+  background-color: var(--indigo);
+  border-color: var(--indigo);
+}
+body.site-page .navbar-default .navbar-nav > li > a {
+  color: var(--sand);
+  background: none;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+body.site-page .navbar-default .navbar-nav > li > a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 10px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--sun), var(--sea));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+body.site-page .navbar-default .navbar-nav > li > a:hover,
+body.site-page .navbar-default .navbar-nav > li > a:focus {
+  color: var(--sand);
+  background: none;
+}
+body.site-page .navbar-default .navbar-nav > li > a:hover::after,
+body.site-page .navbar-default .navbar-nav > li > a:focus::after {
+  transform: scaleX(1);
+}
+body.site-page .navbar-default .navbar-nav > .active > a,
+body.site-page .navbar-default .navbar-nav > .active > a:hover,
+body.site-page .navbar-default .navbar-nav > .active > a:focus,
+body.site-page .navbar-default .navbar-nav > .open > a,
+body.site-page .navbar-default .navbar-nav > .open > a:hover,
+body.site-page .navbar-default .navbar-nav > .open > a:focus {
+  color: var(--sun);
+  background: none;
+}
+body.site-page .dropdown ul.dropdown-menu {
+  background-color: var(--panel);
+  border: 1px solid rgba(var(--sand-rgb), 0.12);
+}
+body.site-page .dropdown ul.dropdown-menu > li > a {
+  color: var(--sand);
+}
+body.site-page .dropdown ul.dropdown-menu > li > a:hover {
+  background-color: rgba(var(--sand-rgb), 0.08);
+  color: var(--sun);
+}
+/* Same sticky-nav opacity fix as the other pages */
+body.site-page .navbar.stick {
+  opacity: 1;
+  background-color: var(--indigo);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Footer */
+body.site-page #footer {
+  background: var(--panel);
+  color: rgba(var(--sand-rgb), 0.75);
+}
+body.site-page #footer a {
+  color: var(--sand);
+}
+body.site-page #footer a:hover {
+  color: var(--sun);
+}
+body.site-page #footer h3.widget-title {
+  font-family: var(--font-heading);
+  color: var(--sand);
+}
+body.site-page #underfooter {
+  background: var(--indigo);
+  color: rgba(var(--sand-rgb), 0.6);
+}
+
+/* Page title (Sketchbook + project pages) */
+body.site-page .page-header {
+  border-bottom: none;
+}
+body.site-page .page-title {
+  font-family: var(--font-heading);
+  color: var(--sand);
+}
+
+/* Sidebar widgets (About + project pages) */
+body.site-page .sidebar {
+  background: var(--panel);
+  border-left: 4px solid var(--citrus);
+  border-radius: 12px;
+  padding: 24px;
+}
+body.site-page .widget {
+  margin-bottom: 26px;
+}
+body.site-page .widget:last-child {
+  margin-bottom: 0;
+}
+body.site-page .widget h4 {
+  font-size: 1.05rem;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(var(--sand-rgb), 0.15);
+}
+body.site-page .widget ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+body.site-page .widget ul li {
+  position: relative;
+  padding: 6px 0 6px 18px;
+  color: rgba(var(--sand-rgb), 0.85);
+}
+body.site-page .widget ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  width: 6px;
+  height: 6px;
+  background: var(--sea);
+}
+body.site-page .widget .btn-primary {
+  background: var(--citrus);
+  border-color: var(--citrus);
+  color: var(--ink-on-accent);
+  text-shadow: none;
+}
+body.site-page .widget .btn-primary:hover,
+body.site-page .widget .btn-primary:focus {
+  background: var(--sun);
+  border-color: var(--sun);
+  color: var(--ink-on-accent);
+}
+
+/* Main article content (About + project pages) */
+body.site-page .maincontent p {
+  color: rgba(var(--sand-rgb), 0.85);
+  line-height: 1.8;
+}
+body.site-page .maincontent img.img-responsive,
+body.site-page .project-cover-image {
+  border: 8px solid var(--panel);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Project gallery grid (the 4 individual project pages) — same framed +
+   corner-accent treatment as project-detail.html's gallery, reusing the
+   existing .project-gallery-item wrapper div so no markup changes needed */
+body.site-page .project-gallery-item {
+  position: relative;
+  background: var(--panel);
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+body.site-page .project-gallery-item::before,
+body.site-page .project-gallery-item::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--vermil);
+  z-index: 2;
+}
+body.site-page .project-gallery-item::before {
+  top: -4px;
+  left: -4px;
+}
+body.site-page .project-gallery-item::after {
+  bottom: -4px;
+  right: -4px;
+}
+
+/* Sketch gallery + Blender section (Sketchbook page) */
+body.site-page .sketch-item {
+  background: var(--panel);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+body.site-page .blender-section {
+  border-top: 1px solid rgba(var(--sand-rgb), 0.15);
+}
+body.site-page .blender-section .section-label {
+  color: var(--vermil);
+}
+body.site-page .blender-item {
+  background: var(--indigo);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}

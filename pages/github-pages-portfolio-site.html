@@ -10,9 +10,11 @@
 	<link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet">
 	<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alice|Open+Sans:400,300,700">
-	<link rel="stylesheet" href="../assets/css/styles.css">
+	<!-- Shared theme tokens (colors + Fraunces/Manrope) — same file as index.html and project-detail.html, see assets/css/theme.css -->
+	<link rel="stylesheet" href="../assets/css/theme.css">
+	<link rel="stylesheet" href="../assets/css/styles.css?v=3">
 </head>
-<body>
+<body class="site-page">
 
 <header id="header">
 	<div id="head" class="parallax" parallax-speed="1">
@@ -22,7 +24,7 @@
 		</h1>
 	</div>
 
-	<nav class="navbar navbar-default">
+	<nav class="navbar navbar-default navbar-sticky">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -47,6 +49,7 @@
 					</li>
 					<li><a href="sketchbook.html">Sketchbook</a></li>
 				</ul>
+				<button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light and dark mode">🌙</button>
 			</div>
 		</div>
 	</nav>
