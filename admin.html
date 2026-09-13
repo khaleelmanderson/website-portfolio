@@ -60,6 +60,108 @@
         .btn-group-form {
             margin-top: 20px;
         }
+        .gallery-upload-dropzone {
+            border: 1px dashed #d9d9d9;
+            border-radius: 4px;
+            background: #fafafa;
+            padding: 18px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .gallery-upload-dropzone:hover,
+        .gallery-upload-dropzone.is-dragover {
+            border-color: #337ab7;
+            background-color: #f1f8ff;
+            box-shadow: inset 0 0 0 1px rgba(51, 122, 183, 0.15);
+        }
+        .gallery-upload-content {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: #555;
+        }
+        .gallery-upload-content .glyphicon {
+            font-size: 20px;
+            color: #777;
+        }
+        .gallery-upload-content strong {
+            display: block;
+            margin-bottom: 2px;
+            font-size: 14px;
+        }
+        .gallery-browse-btn {
+            padding: 0;
+            border: none;
+            background: none;
+            color: #337ab7;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        .gallery-upload-preview {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .gallery-thumb {
+            position: relative;
+            width: 110px;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            background: #fff;
+            overflow: hidden;
+        }
+        .gallery-thumb img {
+            display: block;
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+        .gallery-thumb-name {
+            display: block;
+            padding: 5px 8px 8px;
+            font-size: 11px;
+            line-height: 1.3;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .gallery-thumb-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+            line-height: 1;
+        }
+        .gallery-invalid-list {
+            margin-top: 12px;
+            padding: 8px 10px;
+            border: 1px solid #f2dede;
+            border-radius: 4px;
+            background: #fff6f6;
+            display: none;
+        }
+        .gallery-invalid-item {
+            font-size: 12px;
+            color: #a94442;
+            margin: 4px 0;
+        }
+        .gallery-invalid-name {
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -151,9 +253,20 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="gallery-images">Additional Gallery Images</label>
-                            <input type="file" class="form-control" id="gallery-images" accept="image/*" multiple>
-                            <small class="form-text text-muted">JPG, PNG, or GIF</small>
+                            <label>Additional Gallery Images</label>
+                            <div id="gallery-dropzone" class="gallery-upload-dropzone" tabindex="0" role="button" aria-label="Upload gallery images">
+                                <input type="file" id="gallery-images" accept="image/*" multiple style="display:none;">
+                                <div class="gallery-upload-content">
+                                    <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+                                    <div>
+                                        <strong>Drag &amp; drop images here</strong>
+                                        <span>or <button type="button" class="btn btn-link gallery-browse-btn">Choose files</button></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="gallery-preview" class="gallery-upload-preview" aria-live="polite"></div>
+                            <div id="gallery-invalid-list" class="gallery-invalid-list" aria-live="polite"></div>
+                            <small class="form-text text-muted">JPG, PNG, or GIF; 5MB max per image</small>
                         </div>
 
                         <div class="form-group">

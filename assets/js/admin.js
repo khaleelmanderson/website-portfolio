@@ -28,6 +28,163 @@ $(document).ready(() => {
   let editingId = null;
   let editingImageUrl = null;
   let editingGalleryImages = [];
+  let selectedGalleryFiles = [];
+  let rejectedGalleryFiles = [];
+  let galleryPreviewUrls = {};
+
+  function getGalleryFileKey(file) {
+    if (!file) return null;
+    return `${file.name}-${file.size}-${file.lastModified}`;
+  }
+
+  function renderGalleryPreview() {
+    const $preview = $('#gallery-preview');
+    const $invalidList = $('#gallery-invalid-list');
+    $preview.empty();
+
+    if (!selectedGalleryFiles.length) {
+      $preview.hide();
+    } else {
+      selectedGalleryFiles.forEach((file) => {
+        const fileKey = getGalleryFileKey(file);
+        const previewUrl = galleryPreviewUrls[fileKey] || URL.createObjectURL(file);
+        galleryPreviewUrls[fileKey] = previewUrl;
+
+        const $thumb = $('<div class="gallery-thumb"></div>');
+        const $img = $('<img>').attr({ src: previewUrl, alt: file.name });
+        const $name = $('<span class="gallery-thumb-name"></span>').text(file.name);
+        const $remove = $('<button type="button" class="gallery-thumb-remove" aria-label="Remove image">&times;</button>');
+        $remove.on('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          removeGalleryFile(file);
+        });
+
+        $thumb.append($img).append($name).append($remove);
+        $preview.append($thumb);
+      });
+      $preview.css('display', 'flex').show();
+    }
+
+    $invalidList.empty();
+    if (!rejectedGalleryFiles.length) {
+      $invalidList.hide();
+      return;
+    }
+
+    rejectedGalleryFiles.forEach((entry) => {
+      const $item = $('<div class="gallery-invalid-item"></div>');
+      const $name = $('<span class="gallery-invalid-name"></span>').text(entry.file.name);
+      const $message = $('<span class="text-danger"></span>').text(` — ${entry.error}`);
+      $item.append($name).append($message);
+      $invalidList.append($item);
+    });
+    $invalidList.show();
+  }
+
+  function removeGalleryFile(file) {
+    const fileKey = getGalleryFileKey(file);
+    if (!fileKey) return;
+
+    const existingIndex = selectedGalleryFiles.findIndex((item) => getGalleryFileKey(item) === fileKey);
+    if (existingIndex !== -1) {
+      selectedGalleryFiles.splice(existingIndex, 1);
+    }
+
+    if (galleryPreviewUrls[fileKey]) {
+      URL.revokeObjectURL(galleryPreviewUrls[fileKey]);
+      delete galleryPreviewUrls[fileKey];
+    }
+
+    renderGalleryPreview();
+  }
+
+  function addGalleryFiles(fileList) {
+    const incomingFiles = Array.from(fileList || []);
+    const validFiles = [];
+    const invalidEntries = [];
+
+    incomingFiles.forEach((file) => {
+      const validationError = validateImageFile(file);
+      if (validationError) {
+        invalidEntries.push({ file, error: validationError });
+        return;
+      }
+
+      const fileKey = getGalleryFileKey(file);
+      const alreadySelected = selectedGalleryFiles.some((item) => getGalleryFileKey(item) === fileKey);
+      if (!alreadySelected) {
+        validFiles.push(file);
+      }
+    });
+
+    selectedGalleryFiles = selectedGalleryFiles.concat(validFiles);
+    rejectedGalleryFiles = rejectedGalleryFiles.concat(invalidEntries);
+    renderGalleryPreview();
+    $('#gallery-images').val('');
+  }
+
+  function resetGalleryUploadState() {
+    selectedGalleryFiles = [];
+    rejectedGalleryFiles = [];
+    Object.keys(galleryPreviewUrls).forEach((key) => {
+      URL.revokeObjectURL(galleryPreviewUrls[key]);
+    });
+    galleryPreviewUrls = {};
+    renderGalleryPreview();
+    $('#gallery-images').val('');
+  }
+
+  function handleGalleryDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    $('#gallery-dropzone').removeClass('is-dragover');
+    if (event.originalEvent && event.originalEvent.dataTransfer && event.originalEvent.dataTransfer.files) {
+      addGalleryFiles(event.originalEvent.dataTransfer.files);
+    }
+  }
+
+  $('#gallery-dropzone').on('dragover dragenter', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    $('#gallery-dropzone').addClass('is-dragover');
+  });
+
+  $('#gallery-dropzone').on('dragleave', (event) => {
+    if (!$(event.currentTarget).is(':hover')) {
+      $('#gallery-dropzone').removeClass('is-dragover');
+    }
+  });
+
+  $('#gallery-dropzone').on('drop', handleGalleryDrop);
+  $('#gallery-dropzone').on('click', (event) => {
+    if ($(event.target).closest('.gallery-thumb, .gallery-thumb-remove, .gallery-browse-btn').length) {
+      return;
+    }
+    const fileInput = document.getElementById('gallery-images');
+    if (fileInput) {
+      fileInput.click();
+    }
+  });
+
+  $('#gallery-dropzone').on('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      $('#gallery-images').trigger('click');
+    }
+  });
+
+  $('.gallery-browse-btn').on('click', (event) => {
+    event.preventDefault();
+    const fileInput = document.getElementById('gallery-images');
+    if (fileInput) {
+      fileInput.click();
+    }
+  });
+
+  $('#gallery-images').on('change', function(){
+    addGalleryFiles(this.files);
+  });
 
   // Check session on load
   (async function checkSession(){
@@ -81,17 +238,6 @@ $(document).ready(() => {
     $('#image-preview').attr('src', url).show();
   });
 
-  $('#gallery-images').on('change', function(){
-    for (const file of this.files) {
-      const validationError = validateImageFile(file);
-      if (validationError) {
-        $(this).val('');
-        $formAlert.removeClass('alert-success').addClass('alert-danger').text(validationError).show();
-        return;
-      }
-    }
-  });
-
   // Publish / Draft buttons
   $('#publish-btn').on('click', () => submitForm('published'));
   $('#draft-btn').on('click', () => submitForm('draft'));
@@ -119,7 +265,6 @@ $(document).ready(() => {
     const key_highlights = JSON.stringify(parseLineInput($('#key_highlights').val()));
     const project_link = sanitizeProjectLink($('#project_link').val().trim() || null);
     const fileInput = document.getElementById('image');
-    const galleryInput = document.getElementById('gallery-images');
     let image_url = null;
 
     try {
@@ -130,7 +275,7 @@ $(document).ready(() => {
         image_url = await uploadImageFile(file, 'cover');
       }
 
-      const gallery_images = JSON.stringify(await uploadGalleryImages(galleryInput?.files || []));
+      const gallery_images = JSON.stringify(await uploadGalleryImages(selectedGalleryFiles));
 
       const payload = { title, description, tags, role, tools, focus, key_highlights, gallery_images, project_link, image_url, status };
 
@@ -156,6 +301,7 @@ $(document).ready(() => {
     editingId = null;
     editingImageUrl = null;
     editingGalleryImages = [];
+    resetGalleryUploadState();
     $('#project-id').val('');
     $('#project-form')[0].reset();
     $('#image-preview').hide();
@@ -235,6 +381,7 @@ $(document).ready(() => {
     editingId = p.id;
     editingImageUrl = sanitizeImageUrl(p.image_url);
     editingGalleryImages = parseTags(p.gallery_images);
+    resetGalleryUploadState();
     $('#project-id').val(p.id);
     $('#title').val(p.title);
     $('#description').val(p.description);
@@ -272,7 +419,6 @@ $(document).ready(() => {
     const key_highlights = JSON.stringify(parseLineInput($('#key_highlights').val()));
     const project_link = sanitizeProjectLink($('#project_link').val().trim() || null);
     const fileInput = document.getElementById('image');
-    const galleryInput = document.getElementById('gallery-images');
     let image_url = null;
 
     try {
@@ -283,7 +429,7 @@ $(document).ready(() => {
         image_url = await uploadImageFile(file, 'cover');
       }
 
-      const newGalleryImages = await uploadGalleryImages(galleryInput?.files || []);
+      const newGalleryImages = await uploadGalleryImages(selectedGalleryFiles);
       const gallery_images = JSON.stringify(editingGalleryImages.concat(newGalleryImages));
 
       // Update without changing status
