@@ -1128,3 +1128,357 @@ footer.entry-meta .meta-in {
     grid-template-columns: 1fr;
   }
 }
+
+/*********************************************************************
+
+                    HOMEPAGE REDESIGN — "Sunset" theme
+  Scoped entirely to body.home (index.html only) so about.html,
+  blog.html, project-detail.html, admin.html and the sketchbook/
+  project pages keep their existing look untouched.
+
+**********************************************************************/
+:root {
+  --sunset-indigo: #101E30;
+  --sunset-panel: #172A40;
+  --sunset-sun: #F2A93B;
+  --sunset-citrus: #E8623D;
+  --sunset-sea: #2C8F8A;
+  --sunset-vermilion: #D65438;
+  --sunset-sand: #EFE6D3;
+  --sunset-font-heading: 'Fraunces', Georgia, serif;
+  --sunset-font-body: 'Manrope', "Open sans", Helvetica, Arial, sans-serif;
+}
+
+/* Base */
+body.home {
+  background: var(--sunset-indigo);
+  color: var(--sunset-sand);
+  font-family: var(--sunset-font-body);
+}
+body.home h1,
+body.home h2,
+body.home h3,
+body.home h4,
+body.home h5,
+body.home h6,
+body.home .section-title,
+body.home .section-title a {
+  font-family: var(--sunset-font-heading);
+  font-weight: 700;
+  color: var(--sunset-sand);
+}
+body.home p {
+  font-family: var(--sunset-font-body);
+}
+body.home a {
+  color: var(--sunset-citrus);
+}
+body.home a:hover {
+  color: var(--sunset-sun);
+}
+body.home .section-title span:before,
+body.home .section-title span:after {
+  border-color: rgba(239, 230, 211, 0.25);
+}
+body.home .lead {
+  background: var(--sunset-panel);
+  color: var(--sunset-sand);
+  border-left: 4px solid var(--sunset-sea);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Navigation — color-sweep underline on hover */
+body.home .navbar-default {
+  background-color: var(--sunset-indigo);
+  border-color: var(--sunset-indigo);
+}
+body.home .navbar-default .navbar-nav > li > a {
+  color: var(--sunset-sand);
+  background: none;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+body.home .navbar-default .navbar-nav > li > a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 10px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--sunset-sun), var(--sunset-sea));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+body.home .navbar-default .navbar-nav > li > a:hover,
+body.home .navbar-default .navbar-nav > li > a:focus {
+  color: var(--sunset-sand);
+  background: none;
+}
+body.home .navbar-default .navbar-nav > li > a:hover::after,
+body.home .navbar-default .navbar-nav > li > a:focus::after {
+  transform: scaleX(1);
+}
+body.home .navbar-default .navbar-nav > .active > a,
+body.home .navbar-default .navbar-nav > .active > a:hover,
+body.home .navbar-default .navbar-nav > .active > a:focus,
+body.home .navbar-default .navbar-nav > .open > a,
+body.home .navbar-default .navbar-nav > .open > a:hover,
+body.home .navbar-default .navbar-nav > .open > a:focus {
+  color: var(--sunset-sun);
+  background: none;
+}
+body.home .dropdown ul.dropdown-menu {
+  background-color: var(--sunset-panel);
+  border: 1px solid rgba(239, 230, 211, 0.12);
+}
+body.home .dropdown ul.dropdown-menu > li > a {
+  color: var(--sunset-sand);
+}
+body.home .dropdown ul.dropdown-menu > li > a:hover {
+  background-color: rgba(239, 230, 211, 0.08);
+  color: var(--sunset-sun);
+}
+
+/* Hero */
+body.home #head {
+  background: var(--sunset-indigo);
+  position: relative;
+  overflow: hidden;
+  padding: 70px 0 90px 0;
+}
+body.home #head #logo {
+  position: relative;
+  z-index: 2;
+}
+body.home #head img.img-circle {
+  border-color: var(--sunset-sand);
+}
+body.home #head .title {
+  font-family: var(--sunset-font-heading);
+  font-weight: 700;
+  color: var(--sunset-sand);
+  text-shadow: none;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: sunset-fade-up 0.4s ease 0.6s forwards;
+}
+body.home #head .tagline {
+  color: var(--sunset-sand);
+  text-shadow: none;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: sunset-fade-up 0.4s ease 0.75s forwards;
+}
+body.home #head .tagline a {
+  color: var(--sunset-sun);
+}
+
+/* Hero badge */
+body.home .hero-badge {
+  display: inline-block;
+  font-family: var(--sunset-font-body);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sunset-sand);
+  background: var(--sunset-vermilion);
+  padding: 6px 20px;
+  border-radius: 999px;
+  margin: 0 0 18px 0;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: sunset-fade-up 0.4s ease 0.45s forwards;
+}
+
+/* Hero vertical striped edge */
+body.home .hero-stripe {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    180deg,
+    var(--sunset-sun) 0px, var(--sunset-sun) 22px,
+    var(--sunset-citrus) 22px, var(--sunset-citrus) 44px,
+    var(--sunset-sea) 44px, var(--sunset-sea) 66px
+  );
+}
+
+/* Hero sunset circle */
+body.home .hero-sunset {
+  position: absolute;
+  z-index: 1;
+  top: 14px;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--sunset-sun) 0%, var(--sunset-citrus) 100%);
+  opacity: 0;
+  transform: translate(-50%, 30px);
+  animation: sunset-rise-in 0.5s ease forwards, sunset-glow-pulse 5s ease-in-out 0.5s infinite;
+}
+body.home .hero-sunset::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40%;
+  background: var(--sunset-sea);
+}
+
+/* Hero wave */
+body.home .hero-wave {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 60px;
+}
+body.home .hero-wave path {
+  fill: none;
+  stroke: var(--sunset-sea);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1600;
+  stroke-dashoffset: 1600;
+  animation: sunset-wave-draw 0.5s ease 0.1s forwards;
+}
+
+/* Hero load-in keyframes (play once, no looping) */
+@keyframes sunset-rise-in {
+  from { opacity: 0; transform: translate(-50%, 30px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes sunset-wave-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes sunset-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Ambient glow pulse — slow, subtle, continuous */
+@keyframes sunset-glow-pulse {
+  0%, 100% { box-shadow: 0 0 40px 0 rgba(242, 169, 59, 0.3); }
+  50%      { box-shadow: 0 0 60px 8px rgba(242, 169, 59, 0.5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.home .hero-sunset,
+  body.home .hero-wave path,
+  body.home .hero-badge,
+  body.home #head .title,
+  body.home #head .tagline {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: translate(0, 0) !important;
+  }
+}
+
+/* Skills cards — left border accent, shifts on hover, card lift */
+body.home .featured .skill-card {
+  background: var(--sunset-panel);
+  border: 1px solid rgba(239, 230, 211, 0.08);
+  border-left: 4px solid var(--sunset-sea);
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-left-color 0.25s ease;
+}
+body.home .featured .skill-card::before {
+  content: none;
+}
+body.home .featured .skill-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
+  border-left-color: var(--sunset-citrus);
+}
+body.home .featured .skill-card h3 {
+  font-family: var(--sunset-font-heading);
+  color: var(--sunset-sand);
+}
+body.home .featured .skill-card p {
+  color: rgba(239, 230, 211, 0.82);
+}
+
+/* Recent works / project cards */
+body.home #projects-container > div {
+  background: var(--sunset-panel);
+  border-radius: 12px;
+  padding: 16px 16px 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+body.home #projects-container > div:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.5);
+}
+body.home .thumbnail {
+  position: relative;
+  color: var(--sunset-sand);
+  background: transparent;
+}
+body.home .thumbnail .title {
+  font-family: var(--sunset-font-heading);
+  color: var(--sunset-sand);
+}
+body.home .thumbnail:hover .title {
+  color: var(--sunset-sun);
+}
+body.home .thumbnail .cover {
+  background: linear-gradient(135deg, rgba(16, 30, 48, 0.88), rgba(214, 84, 56, 0.35));
+  border-color: rgba(239, 230, 211, 0.2);
+}
+body.home .thumbnail .cover .more {
+  background: var(--sunset-vermilion);
+  color: var(--sunset-sand);
+  text-shadow: none;
+}
+body.home .details {
+  color: rgba(239, 230, 211, 0.65);
+}
+/* Corner accent mark on each card's thumbnail */
+body.home .thumbnail::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 16px;
+  height: 16px;
+  background: var(--sunset-vermilion);
+  z-index: 3;
+  pointer-events: none;
+  transition: transform 0.3s ease;
+}
+body.home .thumbnail:hover::after {
+  transform: rotate(90deg) scale(1.35);
+}
+
+/* Footer */
+body.home #footer {
+  background: var(--sunset-panel);
+  color: rgba(239, 230, 211, 0.75);
+}
+body.home #footer a {
+  color: var(--sunset-sand);
+}
+body.home #footer a:hover {
+  color: var(--sunset-sun);
+}
+body.home #footer h3.widget-title {
+  font-family: var(--sunset-font-heading);
+  color: var(--sunset-sand);
+}
+body.home #underfooter {
+  background: var(--sunset-indigo);
+  color: rgba(239, 230, 211, 0.6);
+}
