@@ -347,7 +347,8 @@ $(document).ready(() => {
 
       const safeImageUrl = sanitizeImageUrl(p.image_url);
       if (safeImageUrl) $left.append(`<img src="${safeImageUrl}" alt="${escapeAttr(p.title || 'Project image')}" style="max-width:100%;border-radius:4px">`);
-      $mid.append(`<strong>${escapeHtml(p.title || '')}</strong> <span class="label label-info status-badge">${escapeHtml(p.status || '')}</span><div>${escapeHtml((p.description||'').slice(0,200))}</div>`);
+      const statusClass = p.status === 'published' ? 'status-published' : 'status-draft';
+      $mid.append(`<strong>${escapeHtml(p.title || '')}</strong> <span class="label label-info status-badge ${statusClass}">${escapeHtml(p.status || '')}</span><div>${escapeHtml((p.description||'').slice(0,200))}</div>`);
       const editBtn = $(`<button class="btn btn-xs btn-primary" data-id="${p.id}">Edit</button>`).on('click', async () => {
         try {
           await startEdit(p);
