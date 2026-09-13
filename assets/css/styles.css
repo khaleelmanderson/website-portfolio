@@ -1272,9 +1272,11 @@ body.home #head #logo {
   margin: 0;
 }
 body.home #head .title {
-  font-family: var(--sunset-font-heading);
+  font-family: 'Fraunces', serif;
   font-weight: 700;
-  color: var(--sunset-sand);
+  color: #EFE6D3;
+  font-size: clamp(40px, 5.5vw, 64px);
+  line-height: 1.03;
   text-shadow: none;
   opacity: 0;
   transform: translateY(16px);
@@ -1361,22 +1363,19 @@ body.home .hero-sunset::after {
 }
 
 /* Hero wave */
-body.home .hero-wave {
+body.home .wave {
   position: absolute;
   z-index: 1;
   left: 0;
   right: 0;
-  bottom: -2px;
+  bottom: 0;
   width: 100%;
   height: 60px;
+  opacity: 0.4;
 }
-body.home .hero-wave path {
-  fill: none;
-  stroke: var(--sunset-sea);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-dasharray: 1600;
-  stroke-dashoffset: 1600;
+body.home .wave path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
   animation: sunset-wave-draw 0.5s ease 0.1s forwards;
 }
 
@@ -1411,7 +1410,7 @@ body.home .hero-wave path {
 
 @media (prefers-reduced-motion: reduce) {
   body.home .hero-sunset,
-  body.home .hero-wave path,
+  body.home .wave path,
   body.home .hero-badge,
   body.home #head .title,
   body.home #head .tagline {
