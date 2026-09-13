@@ -1133,27 +1133,22 @@ footer.entry-meta .meta-in {
 
                     HOMEPAGE REDESIGN — "Sunset" theme
   Scoped entirely to body.home (index.html only) so about.html,
-  blog.html, project-detail.html, admin.html and the sketchbook/
-  project pages keep their existing look untouched.
+  blog.html, admin.html and the sketchbook/project pages keep their
+  existing look untouched. project-detail.html opts into the same
+  design system too, scoped under body.project-detail further below.
+
+  Color/font tokens (--indigo, --panel, --sun, --citrus, --sea,
+  --vermil, --sand, --font-heading, --font-body) live in
+  assets/css/theme.css, linked before this file on any themed page —
+  that's the single source of truth so pages can't drift out of sync.
 
 **********************************************************************/
-:root {
-  --sunset-indigo: #101E30;
-  --sunset-panel: #172A40;
-  --sunset-sun: #F2A93B;
-  --sunset-citrus: #E8623D;
-  --sunset-sea: #2C8F8A;
-  --sunset-vermilion: #D65438;
-  --sunset-sand: #EFE6D3;
-  --sunset-font-heading: 'Fraunces', Georgia, serif;
-  --sunset-font-body: 'Manrope', "Open sans", Helvetica, Arial, sans-serif;
-}
 
 /* Base */
 body.home {
-  background: var(--sunset-indigo);
-  color: var(--sunset-sand);
-  font-family: var(--sunset-font-body);
+  background: var(--indigo);
+  color: var(--sand);
+  font-family: var(--font-body);
 }
 body.home h1,
 body.home h2,
@@ -1163,45 +1158,45 @@ body.home h5,
 body.home h6,
 body.home .section-title,
 body.home .section-title a {
-  font-family: var(--sunset-font-heading);
+  font-family: var(--font-heading);
   font-weight: 700;
-  color: var(--sunset-sand);
+  color: var(--sand);
 }
 body.home p {
-  font-family: var(--sunset-font-body);
+  font-family: var(--font-body);
 }
 body.home a {
-  color: var(--sunset-citrus);
+  color: var(--citrus);
 }
 body.home a:hover {
-  color: var(--sunset-sun);
+  color: var(--sun);
 }
 body.home .section-title span:before,
 body.home .section-title span:after {
   border-color: rgba(239, 230, 211, 0.25);
 }
 body.home .lead {
-  background: var(--sunset-panel);
-  color: var(--sunset-sand);
-  border-left: 4px solid var(--sunset-sea);
+  background: var(--panel);
+  color: var(--sand);
+  border-left: 4px solid var(--sea);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
 }
 
 /* Navigation — color-sweep underline on hover */
 body.home .navbar-default {
-  background-color: var(--sunset-indigo);
-  border-color: var(--sunset-indigo);
+  background-color: var(--indigo);
+  border-color: var(--indigo);
 }
 /* The base template makes the sticky nav 85% opaque (.navbar.stick), which
    lets scrolled-past content show through it. Keep it fully opaque here so
    it reads as a solid bar instead of overlapping the page underneath. */
 body.home .navbar.stick {
   opacity: 1;
-  background-color: var(--sunset-indigo);
+  background-color: var(--indigo);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 body.home .navbar-default .navbar-nav > li > a {
-  color: var(--sunset-sand);
+  color: var(--sand);
   background: none;
   position: relative;
   overflow: hidden;
@@ -1214,14 +1209,14 @@ body.home .navbar-default .navbar-nav > li > a::after {
   bottom: 10px;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, var(--sunset-sun), var(--sunset-sea));
+  background: linear-gradient(90deg, var(--sun), var(--sea));
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.35s ease;
 }
 body.home .navbar-default .navbar-nav > li > a:hover,
 body.home .navbar-default .navbar-nav > li > a:focus {
-  color: var(--sunset-sand);
+  color: var(--sand);
   background: none;
 }
 body.home .navbar-default .navbar-nav > li > a:hover::after,
@@ -1234,24 +1229,24 @@ body.home .navbar-default .navbar-nav > .active > a:focus,
 body.home .navbar-default .navbar-nav > .open > a,
 body.home .navbar-default .navbar-nav > .open > a:hover,
 body.home .navbar-default .navbar-nav > .open > a:focus {
-  color: var(--sunset-sun);
+  color: var(--sun);
   background: none;
 }
 body.home .dropdown ul.dropdown-menu {
-  background-color: var(--sunset-panel);
+  background-color: var(--panel);
   border: 1px solid rgba(239, 230, 211, 0.12);
 }
 body.home .dropdown ul.dropdown-menu > li > a {
-  color: var(--sunset-sand);
+  color: var(--sand);
 }
 body.home .dropdown ul.dropdown-menu > li > a:hover {
   background-color: rgba(239, 230, 211, 0.08);
-  color: var(--sunset-sun);
+  color: var(--sun);
 }
 
 /* Hero */
 body.home #head {
-  background: var(--sunset-indigo);
+  background: var(--indigo);
   position: relative;
   overflow: hidden;
   padding: 70px 0 100px 0;
@@ -1291,26 +1286,26 @@ body.home #head .title {
   animation: sunset-fade-up 0.4s ease 0.6s forwards;
 }
 body.home #head .tagline {
-  color: var(--sunset-sand);
+  color: var(--sand);
   text-shadow: none;
   opacity: 0;
   transform: translateY(16px);
   animation: sunset-fade-up 0.4s ease 0.75s forwards;
 }
 body.home #head .tagline a {
-  color: var(--sunset-sun);
+  color: var(--sun);
 }
 
 /* Hero badge */
 body.home .hero-badge {
   display: inline-block;
-  font-family: var(--sunset-font-body);
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.8125rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--sunset-sand);
-  background: var(--sunset-vermilion);
+  color: var(--sand);
+  background: var(--vermil);
   padding: 6px 20px;
   border-radius: 999px;
   margin: 0 0 18px 0;
@@ -1329,9 +1324,9 @@ body.home .hero-stripe {
   z-index: 1;
   background: repeating-linear-gradient(
     180deg,
-    var(--sunset-sun) 0px, var(--sunset-sun) 70px,
-    var(--sunset-citrus) 70px, var(--sunset-citrus) 140px,
-    var(--sunset-sea) 140px, var(--sunset-sea) 210px
+    var(--sun) 0px, var(--sun) 70px,
+    var(--citrus) 70px, var(--citrus) 140px,
+    var(--sea) 140px, var(--sea) 210px
   );
   box-shadow: -2px 0 12px rgba(0, 0, 0, 0.25);
 }
@@ -1349,7 +1344,7 @@ body.home .hero-sunset {
   height: 220px;
   border-radius: 50%;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--sunset-sun) 0%, var(--sunset-citrus) 100%);
+  background: linear-gradient(180deg, var(--sun) 0%, var(--citrus) 100%);
   opacity: 0;
   transform: translateY(30px);
   animation: sunset-rise-in 0.5s ease forwards, sunset-glow-pulse 5s ease-in-out 0.5s infinite;
@@ -1367,7 +1362,7 @@ body.home .hero-sunset::after {
   right: 0;
   bottom: 0;
   height: 40%;
-  background: var(--sunset-sea);
+  background: var(--sea);
 }
 
 /* Hero wave */
@@ -1435,9 +1430,9 @@ body.home .wave path {
 
 /* Skills cards — left border accent, shifts on hover, card lift */
 body.home .featured .skill-card {
-  background: var(--sunset-panel);
+  background: var(--panel);
   border: 1px solid rgba(239, 230, 211, 0.08);
-  border-left: 4px solid var(--sunset-sea);
+  border-left: 4px solid var(--sea);
   border-radius: 10px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-left-color 0.25s ease;
@@ -1448,11 +1443,11 @@ body.home .featured .skill-card::before {
 body.home .featured .skill-card:hover {
   transform: translateY(-6px) scale(1.01);
   box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
-  border-left-color: var(--sunset-citrus);
+  border-left-color: var(--citrus);
 }
 body.home .featured .skill-card h3 {
-  font-family: var(--sunset-font-heading);
-  color: var(--sunset-sand);
+  font-family: var(--font-heading);
+  color: var(--sand);
 }
 body.home .featured .skill-card p {
   color: rgba(239, 230, 211, 0.82);
@@ -1460,7 +1455,7 @@ body.home .featured .skill-card p {
 
 /* Recent works / project cards */
 body.home #projects-container > div {
-  background: var(--sunset-panel);
+  background: var(--panel);
   border-radius: 12px;
   padding: 16px 16px 20px;
   margin-bottom: 30px;
@@ -1473,23 +1468,23 @@ body.home #projects-container > div:hover {
 }
 body.home .thumbnail {
   position: relative;
-  color: var(--sunset-sand);
+  color: var(--sand);
   background: transparent;
 }
 body.home .thumbnail .title {
-  font-family: var(--sunset-font-heading);
-  color: var(--sunset-sand);
+  font-family: var(--font-heading);
+  color: var(--sand);
 }
 body.home .thumbnail:hover .title {
-  color: var(--sunset-sun);
+  color: var(--sun);
 }
 body.home .thumbnail .cover {
   background: linear-gradient(135deg, rgba(16, 30, 48, 0.88), rgba(214, 84, 56, 0.35));
   border-color: rgba(239, 230, 211, 0.2);
 }
 body.home .thumbnail .cover .more {
-  background: var(--sunset-vermilion);
-  color: var(--sunset-sand);
+  background: var(--vermil);
+  color: var(--sand);
   text-shadow: none;
 }
 body.home .details {
@@ -1506,8 +1501,8 @@ body.home .thumbnail::after {
   width: 18px;
   height: 18px;
   background-color: #D65438; /* plain hex fallback in case custom properties fail to resolve */
-  background-color: var(--sunset-vermilion);
-  border: 2px solid var(--sunset-sand);
+  background-color: var(--vermil);
+  border: 2px solid var(--sand);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   z-index: 10;
   pointer-events: none;
@@ -1519,20 +1514,391 @@ body.home .thumbnail:hover::after {
 
 /* Footer */
 body.home #footer {
-  background: var(--sunset-panel);
+  background: var(--panel);
   color: rgba(239, 230, 211, 0.75);
 }
 body.home #footer a {
-  color: var(--sunset-sand);
+  color: var(--sand);
 }
 body.home #footer a:hover {
-  color: var(--sunset-sun);
+  color: var(--sun);
 }
 body.home #footer h3.widget-title {
-  font-family: var(--sunset-font-heading);
-  color: var(--sunset-sand);
+  font-family: var(--font-heading);
+  color: var(--sand);
 }
 body.home #underfooter {
-  background: var(--sunset-indigo);
+  background: var(--indigo);
   color: rgba(239, 230, 211, 0.6);
+}
+
+/*********************************************************************
+
+              PROJECT DETAIL PAGE — same "Sunset" design system
+  Scoped entirely to body.project-detail (project-detail.html only).
+  Shares the color/font tokens from assets/css/theme.css with the
+  homepage rules above, but keeps its own selectors so each page's
+  block stays easy to read on its own.
+
+**********************************************************************/
+body.project-detail {
+  background: var(--indigo);
+  color: var(--sand);
+  font-family: var(--font-body);
+}
+body.project-detail h1,
+body.project-detail h2,
+body.project-detail h3,
+body.project-detail h4,
+body.project-detail h5,
+body.project-detail h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--sand);
+}
+body.project-detail p {
+  font-family: var(--font-body);
+}
+body.project-detail a {
+  color: var(--citrus);
+}
+body.project-detail a:hover {
+  color: var(--sun);
+}
+
+/* Header / nav — same solid dark bar as the homepage (no hero decoration on this page) */
+body.project-detail #head {
+  background: var(--indigo);
+}
+body.project-detail #head .title,
+body.project-detail #head .tagline {
+  color: var(--sand);
+  text-shadow: none;
+}
+body.project-detail #head .tagline a {
+  color: var(--sun);
+}
+body.project-detail #head img.img-circle {
+  border-color: var(--sand);
+}
+body.project-detail .navbar-default {
+  background-color: var(--indigo);
+  border-color: var(--indigo);
+}
+body.project-detail .navbar-default .navbar-nav > li > a {
+  color: var(--sand);
+  background: none;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+body.project-detail .navbar-default .navbar-nav > li > a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 10px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--sun), var(--sea));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+body.project-detail .navbar-default .navbar-nav > li > a:hover,
+body.project-detail .navbar-default .navbar-nav > li > a:focus {
+  color: var(--sand);
+  background: none;
+}
+body.project-detail .navbar-default .navbar-nav > li > a:hover::after,
+body.project-detail .navbar-default .navbar-nav > li > a:focus::after {
+  transform: scaleX(1);
+}
+body.project-detail .navbar-default .navbar-nav > .active > a,
+body.project-detail .navbar-default .navbar-nav > .active > a:hover,
+body.project-detail .navbar-default .navbar-nav > .active > a:focus,
+body.project-detail .navbar-default .navbar-nav > .open > a,
+body.project-detail .navbar-default .navbar-nav > .open > a:hover,
+body.project-detail .navbar-default .navbar-nav > .open > a:focus {
+  color: var(--sun);
+  background: none;
+}
+body.project-detail .dropdown ul.dropdown-menu {
+  background-color: var(--panel);
+  border: 1px solid rgba(239, 230, 211, 0.12);
+}
+body.project-detail .dropdown ul.dropdown-menu > li > a {
+  color: var(--sand);
+}
+body.project-detail .dropdown ul.dropdown-menu > li > a:hover {
+  background-color: rgba(239, 230, 211, 0.08);
+  color: var(--sun);
+}
+/* Same sticky-nav opacity fix as the homepage (see body.home .navbar.stick) */
+body.project-detail .navbar.stick {
+  opacity: 1;
+  background-color: var(--indigo);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Footer */
+body.project-detail #footer {
+  background: var(--panel);
+  color: rgba(239, 230, 211, 0.75);
+}
+body.project-detail #footer a {
+  color: var(--sand);
+}
+body.project-detail #footer a:hover {
+  color: var(--sun);
+}
+body.project-detail #footer h3.widget-title {
+  font-family: var(--font-heading);
+  color: var(--sand);
+}
+body.project-detail #underfooter {
+  background: var(--indigo);
+  color: rgba(239, 230, 211, 0.6);
+}
+
+/* Page container + back link */
+body.project-detail .project-detail-container {
+  padding: 50px 0 60px;
+}
+body.project-detail .back-link {
+  display: inline-block;
+  margin-bottom: 24px;
+  color: var(--sea);
+  font-weight: 600;
+  text-decoration: none;
+}
+body.project-detail .back-link:hover {
+  color: var(--sun);
+  text-decoration: none;
+}
+
+/* Loading / error states */
+body.project-detail .project-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--sand);
+}
+body.project-detail .project-error {
+  background: var(--panel);
+  border: 1px solid var(--vermil);
+  border-left: 4px solid var(--vermil);
+  padding: 20px;
+  border-radius: 6px;
+  color: var(--sand);
+  margin: 20px 0;
+}
+
+/* Two-column layout: ~65% main content / ~35% sidebar */
+body.project-detail .project-details {
+  margin-top: 10px;
+}
+
+/* Title */
+body.project-detail .project-title {
+  font-size: clamp(32px, 4.5vw, 52px);
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+/* Framed image treatment — cover image and every gallery image share this */
+body.project-detail .project-hero,
+body.project-detail .frame {
+  position: relative;
+  background: var(--panel);
+  padding: 9px;
+  border-radius: 4px;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+body.project-detail .project-hero img,
+body.project-detail .frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+}
+body.project-detail .project-hero::before,
+body.project-detail .project-hero::after,
+body.project-detail .frame::before,
+body.project-detail .frame::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: var(--vermil);
+  z-index: 2;
+}
+body.project-detail .project-hero::before,
+body.project-detail .frame::before {
+  top: -5px;
+  left: -5px;
+}
+body.project-detail .project-hero::after,
+body.project-detail .frame::after {
+  bottom: -5px;
+  right: -5px;
+}
+
+/* Description */
+body.project-detail .project-description {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: rgba(239, 230, 211, 0.85);
+  margin: 0 0 30px;
+}
+
+/* Key Highlights — sea-colored square bullets */
+body.project-detail .project-highlights {
+  margin: 30px 0;
+}
+body.project-detail .project-highlights h2 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+}
+body.project-detail .project-highlights ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+body.project-detail .project-highlights li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 12px;
+  line-height: 1.6;
+  color: rgba(239, 230, 211, 0.9);
+}
+body.project-detail .project-highlights li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.4em;
+  width: 9px;
+  height: 9px;
+  background: var(--sea);
+}
+
+/* Sidebar — Project Snapshot panel */
+body.project-detail .project-snapshot {
+  background: var(--panel);
+  border-left: 4px solid var(--citrus);
+  border-radius: 6px;
+  padding: 24px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+body.project-detail .project-snapshot h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 1.3rem;
+}
+body.project-detail .project-snapshot-list {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+}
+body.project-detail .project-snapshot-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(239, 230, 211, 0.12);
+  font-size: 0.95rem;
+}
+body.project-detail .project-snapshot-list li:last-child {
+  border-bottom: none;
+}
+body.project-detail .project-snapshot-list li strong {
+  color: var(--sun);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.78rem;
+  flex: 0 0 auto;
+}
+body.project-detail .project-snapshot-list li span {
+  color: var(--sand);
+  text-align: right;
+}
+
+/* View Live Project button */
+body.project-detail .btn-view-project {
+  display: block;
+  text-align: center;
+  background: var(--sun);
+  color: var(--indigo);
+  font-weight: 600;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  margin-top: 4px;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+body.project-detail .btn-view-project:hover {
+  background: var(--citrus);
+  color: var(--sand);
+  transform: translateY(-2px);
+}
+
+/* Tags — small bordered pills */
+body.project-detail .project-tags-label {
+  display: block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(239, 230, 211, 0.65);
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+body.project-detail .project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+body.project-detail .project-tag {
+  display: inline-block;
+  background: transparent;
+  border: 1px solid var(--sea);
+  color: var(--sand);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 767px) {
+  body.project-detail #project-snapshot-container {
+    margin-top: 30px;
+  }
+}
+
+/* Gallery — 3-column grid, each image in the same frame treatment,
+   with a slight alternating rotation so it feels a little less rigid */
+body.project-detail .project-gallery {
+  margin-top: 50px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(239, 230, 211, 0.12);
+}
+body.project-detail .project-gallery h2 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+body.project-detail .project-gallery-frame-item:nth-child(3n+1) .frame {
+  transform: rotate(-1deg);
+}
+body.project-detail .project-gallery-frame-item:nth-child(3n+2) .frame {
+  transform: rotate(1deg);
+}
+body.project-detail .project-gallery-frame-item:nth-child(3n+3) .frame {
+  transform: rotate(-0.5deg);
+}
+body.project-detail .project-gallery .frame {
+  margin-bottom: 30px;
+  transition: transform 0.25s ease;
+}
+body.project-detail .project-gallery .frame:hover {
+  transform: scale(1.02) rotate(0deg);
 }

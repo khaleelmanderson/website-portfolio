@@ -100,7 +100,7 @@ async function loadProjectDetail(){
       $('#project-highlights-container').show();
     }
 
-    // Handle project snapshot
+    // Handle project snapshot (Role/Tools/Focus rows — only the fields that have data)
     const snapshotFields = [
       ['Role', data.role],
       ['Tools', data.tools],
@@ -108,10 +108,11 @@ async function loadProjectDetail(){
     ].filter(([, value]) => value !== null && value !== undefined && String(value).trim());
     if (snapshotFields.length > 0){
       const snapshotHtml = snapshotFields
-        .map(([label, value]) => `<li><strong>${label}:</strong> ${escapeHtml(String(value).trim())}</li>`)
+        .map(([label, value]) => `<li><strong>${label}</strong><span>${escapeHtml(String(value).trim())}</span></li>`)
         .join('');
-      $('#project-snapshot').html(snapshotHtml);
-      $('#project-snapshot-container').show();
+      $('#project-snapshot').html(snapshotHtml).show();
+    } else {
+      $('#project-snapshot').hide();
     }
 
     // Handle gallery images
@@ -119,19 +120,27 @@ async function loadProjectDetail(){
       .filter(imageUrl => typeof imageUrl === 'string' && imageUrl.trim());
     if (galleryImages.length > 0){
       const galleryHtml = galleryImages
-        .map(imageUrl => `<div class="col-xs-12 col-sm-6 col-md-4"><img src="${escapeAttr(imageUrl)}" alt="${escapeAttr(data.title || 'Project gallery image')}"></div>`)
+        .map(imageUrl => `<div class="col-xs-12 col-sm-6 col-md-4 project-gallery-frame-item"><div class="frame"><img src="${escapeAttr(imageUrl)}" alt="${escapeAttr(data.title || 'Project gallery image')}"></div></div>`)
         .join('');
       $('#project-gallery').html(galleryHtml);
       $('#project-gallery-container').show();
     }
-    
+
     // Handle project link
     if (data.project_link){
       $('#project-link-btn')
         .attr('href', data.project_link)
         .show();
     }
-    
+
+    // The sidebar only has three possible things in it (Role/Tools/Focus,
+    // the live-project link, and tags) — only show the whole panel if at
+    // least one of them actually has data, so older projects without any
+    // of it don't get an empty "Project Snapshot" box.
+    if (snapshotFields.length > 0 || tagArray.length > 0 || data.project_link){
+      $('#project-snapshot-container').show();
+    }
+
     $loading.hide();
     $error.hide();
     $content.show();
