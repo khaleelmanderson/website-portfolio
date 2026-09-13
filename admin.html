@@ -54,7 +54,7 @@
             margin-bottom: 30px;
         }
         .form-section h3 {
-            border-bottom: 2px solid rgba(239, 230, 211, 0.15);
+            border-bottom: 2px solid rgba(var(--sand-rgb), 0.15);
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
@@ -73,10 +73,10 @@
             box-shadow: 0 0 0 3px rgba(232, 98, 61, 0.25);
         }
         .form-control::placeholder {
-            color: rgba(239, 230, 211, 0.45);
+            color: rgba(var(--sand-rgb), 0.45);
         }
         .form-text.text-muted {
-            color: rgba(239, 230, 211, 0.55);
+            color: rgba(var(--sand-rgb), 0.55);
         }
         /* Compose form sections — three labeled panels (Basics/Details/Media) */
         .form-panel {
@@ -94,7 +94,7 @@
             font-size: 1.1rem;
             margin: 0 0 16px;
             padding-bottom: 12px;
-            border-bottom: 1px solid rgba(239, 230, 211, 0.15);
+            border-bottom: 1px solid rgba(var(--sand-rgb), 0.15);
         }
         .form-panel .form-group:last-child {
             margin-bottom: 0;
@@ -125,7 +125,7 @@
         .project-row {
             padding: 15px;
             background: var(--panel);
-            border: 1px solid rgba(239, 230, 211, 0.1);
+            border: 1px solid rgba(var(--sand-rgb), 0.1);
             margin-bottom: 10px;
             border-radius: 4px;
         }
@@ -139,12 +139,12 @@
         /* Same functional meaning (draft vs published), just retinted:
            draft in a muted neutral tone, published in --sea */
         .status-badge.status-draft {
-            background-color: rgba(239, 230, 211, 0.18);
+            background-color: rgba(var(--sand-rgb), 0.18);
             color: var(--sand);
         }
         .status-badge.status-published {
             background-color: var(--sea);
-            color: var(--sand);
+            color: var(--ink-on-accent);
         }
         #alert-container {
             margin-bottom: 20px;
@@ -165,7 +165,7 @@
             gap: 16px;
             padding: 16px 20px;
             background: var(--indigo);
-            border-top: 1px solid rgba(239, 230, 211, 0.12);
+            border-top: 1px solid rgba(var(--sand-rgb), 0.12);
             box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.35);
         }
         .form-action-bar .btn {
@@ -177,52 +177,52 @@
         #publish-btn {
             background-color: var(--sun);
             border-color: var(--sun);
-            color: var(--indigo);
+            color: var(--ink-on-accent);
         }
         #publish-btn:hover,
         #publish-btn:focus {
             background-color: var(--citrus);
             border-color: var(--citrus);
-            color: var(--sand);
+            color: var(--ink-on-accent);
         }
         #draft-btn {
             background-color: var(--sea);
             border-color: var(--sea);
-            color: var(--indigo);
+            color: var(--ink-on-accent);
         }
         #draft-btn:hover,
         #draft-btn:focus {
             background-color: var(--sea);
             border-color: var(--sea);
-            color: var(--sand);
+            color: var(--ink-on-accent);
             opacity: 0.9;
         }
         #update-btn {
             background-color: var(--citrus);
             border-color: var(--citrus);
-            color: var(--sand);
+            color: var(--ink-on-accent);
         }
         #cancel-btn,
         #logout-btn {
             background-color: transparent;
-            border-color: rgba(239, 230, 211, 0.3);
+            border-color: rgba(var(--sand-rgb), 0.3);
             color: var(--sand);
         }
         #cancel-btn:hover,
         #logout-btn:hover {
-            background-color: rgba(239, 230, 211, 0.1);
+            background-color: rgba(var(--sand-rgb), 0.1);
             color: var(--sand);
         }
         /* Edit / Delete on each project row */
         .project-row .btn-primary {
             background-color: var(--citrus);
             border-color: var(--citrus);
-            color: var(--sand);
+            color: var(--ink-on-accent);
         }
         .project-row .btn-danger {
             background-color: var(--vermil);
             border-color: var(--vermil);
-            color: var(--sand);
+            color: var(--ink-on-accent);
         }
         .gallery-upload-dropzone {
             border: 1px dashed var(--sea);
@@ -266,7 +266,7 @@
             display: none;
             margin-top: 12px;
             padding-top: 12px;
-            border-top: 1px solid rgba(239, 230, 211, 0.15);
+            border-top: 1px solid rgba(var(--sand-rgb), 0.15);
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
@@ -274,7 +274,7 @@
         .gallery-thumb {
             position: relative;
             width: 110px;
-            border: 1px solid rgba(239, 230, 211, 0.15);
+            border: 1px solid rgba(var(--sand-rgb), 0.15);
             border-radius: 4px;
             background: var(--indigo);
             overflow: hidden;
@@ -284,7 +284,7 @@
             width: 100%;
             height: 90px;
             object-fit: cover;
-            border-bottom: 1px solid rgba(239, 230, 211, 0.15);
+            border-bottom: 1px solid rgba(var(--sand-rgb), 0.15);
         }
         .gallery-thumb-name {
             display: block;
@@ -327,9 +327,39 @@
             font-weight: 600;
             color: var(--vermil);
         }
+        /* Theme toggle — same idea as index.html/project-detail.html's
+           button (dark by default, body.light-theme switches to the light
+           variant defined in assets/css/theme.css), but this page doesn't
+           load assets/js/template.js (its sticky-nav logic assumes a
+           .navbar-sticky element this page doesn't have), so it gets its
+           own tiny toggle script at the bottom of the body instead. */
+        .theme-toggle {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            z-index: 1100;
+            border: none;
+            background: #ffffff;
+            color: #111827;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            line-height: 1;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.04);
+        }
+        body.light-theme .theme-toggle {
+            box-shadow: 0 4px 12px rgba(27, 42, 61, 0.2), 0 0 0 1px rgba(27, 42, 61, 0.08);
+        }
     </style>
 </head>
 <body>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light and dark mode">🌙</button>
     <div class="container">
         <!-- LOGIN SECTION -->
         <div id="login-section">
@@ -482,5 +512,18 @@
     
     <!-- Admin Logic -->
     <script src="assets/js/admin.js"></script>
+
+    <!-- Theme toggle — self-contained, no jQuery/admin.js involvement -->
+    <script>
+        (function () {
+            var toggleBtn = document.getElementById('theme-toggle');
+            if (!toggleBtn) return;
+            toggleBtn.addEventListener('click', function () {
+                document.body.classList.toggle('light-theme');
+                var isLight = document.body.classList.contains('light-theme');
+                toggleBtn.textContent = isLight ? '☀️' : '🌙';
+            });
+        })();
+    </script>
 </body>
 </html>
